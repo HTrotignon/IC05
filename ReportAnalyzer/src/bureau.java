@@ -12,7 +12,8 @@ public class bureau {
 	private int nb_exprimés;
 	
 	
-	Map< Long, List<candidats> > liste_candidats_tour;
+	Map< candidat, Long > liste_candidats_tour1;
+	Map< candidat, Long > liste_candidats_tour2;
 	
 }
  
