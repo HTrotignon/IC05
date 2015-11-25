@@ -8,12 +8,19 @@ public class bureau {
 	private int num_bureau;
 	
 	private int bn_inscrits;
-	private int nb_votants;
-	private int nb_exprimés;
+	private int nb_votants_T1;
+	private int nb_exprimés_T1;
+	
+	private int nb_votants_T2;
+	private int nb_exprimés_T2;
 	
 	
 	Map< candidat, Long > liste_candidats_tour1;
 	Map< candidat, Long > liste_candidats_tour2;
+	
+	public void addCandidat(){
+		
+	}
 	
 }
  
