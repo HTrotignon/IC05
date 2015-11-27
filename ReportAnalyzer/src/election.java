@@ -19,15 +19,15 @@ public class election {
 				// quand la méthode retourne la valeur null.
 				while( scanner.hasNextLine() ) {
 				    String line = scanner.nextLine();
-				 
+				    String[] parts = line.split( "\\s" );
+				    
+				    bureau newBureau = new bureau( parts );
 				    System.out.println( line );
 					//faites ici votre traitement
-				    
-				    List< String > newLine = new ArrayList< String >();
 				    				    
-				    int indexBureau = this.liste_bureau.indexOf( newLine );
+				    //int indexBureau = this.liste_bureau.indexOf( resultat );
 				    
-				    if( -1 != indexBureau ){
+				    if( -1 != Integer.parseInt( parts[1] ) ){
 				    	this.liste_bureau.get( indexBureau ).addCandidat();
 				    	
 				    	
@@ -65,6 +65,8 @@ public class election {
 		return null;
 	}
 	
-
+	public void parseLine( String line, List< String > parsedLine ){
+		
+	}
 }
 

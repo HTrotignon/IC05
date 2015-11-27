@@ -1,7 +1,13 @@
 
 public class candidat {
+	public candidat( String sId, String sNuance ) {
+		super();
+		this.id = Integer.parseInt( sId );
+		this.nuance = sNuance;
+	}
+	
 	private int id;
-	private int nuance;
+	private String nuance;
 	
 	
 	public int getId() {
