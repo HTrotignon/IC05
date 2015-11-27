@@ -36,14 +36,18 @@ public class bureau {
 	private int nb_votants_T2;
 	private int nb_exprimés_T2;	
 	
-	Map< candidat, Long > liste_candidats_T1;
-	Map< candidat, Long > liste_candidats_T2;
+	Map< candidat, Integer > liste_candidats_T1;
+	Map< candidat, Integer > liste_candidats_T2;
 	
 	public void addCandidat( candidat newCandidat, String num_tour ){
 		if( 1 == Integer.parseInt( num_tour ))
-			{ this.liste_candidats_T1.put( newCandidat, Long.parseLong( num_tour )); }
+			{ this.liste_candidats_T1.put( newCandidat, Integer.parseInt( num_tour )); }
 		else
-			{ this.liste_candidats_T2.put( newCandidat, Long.parseLong( num_tour )); }
+			{ this.liste_candidats_T2.put( newCandidat, Integer.parseInt( num_tour )); }
+	}
+	
+	public void calculReport(){
+		
 	}
 }
  
