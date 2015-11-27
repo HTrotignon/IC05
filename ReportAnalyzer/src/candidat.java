@@ -16,10 +16,10 @@ public class candidat {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getNuance() {
+	public String getNuance() {
 		return nuance;
 	}
-	public void setNuance(int nuance) {
+	public void setNuance(String nuance) {
 		this.nuance = nuance;
 	}
 	

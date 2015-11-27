@@ -1,5 +1,4 @@
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +18,20 @@ public class election {
 				// quand la méthode retourne la valeur null.
 				while( scanner.hasNextLine() ) {
 				    String line = scanner.nextLine();
-				    String[] parts = line.split( "\\s" );
-				    
+				    String[] parts = line.split( ";" );
 				    bureau newBureau = new bureau( parts );
-				    System.out.println( line );
-					//faites ici votre traitement
-				    				    
-				    //int indexBureau = this.liste_bureau.indexOf( resultat );
 				    
-				    if( -1 != Integer.parseInt( parts[1] ) ){
-				    	this.liste_bureau.get( indexBureau ).addCandidat();
-				    	
-				    	
+				    // Debug
+				    System.out.println( line );
+				    				    
+				    int indexBureau = this.liste_bureau.indexOf( Integer.parseInt( parts[1] ) );
+				    
+				    if( -1 != indexBureau ){
+				    	candidat newCandidat = new candidat( parts[8], parts[11] );
+				    	this.liste_bureau.get( indexBureau ).addCandidat( newCandidat, parts[0] );
+				    }
+				    else {
+				    	this.liste_bureau.add( newBureau );
 				    }
 				    
 				}
@@ -42,31 +43,10 @@ public class election {
 		// erreur de fermeture des flux
 			System.out.println( "Erreur --" + ioe.toString() );
 		}
-		//////////////////////////////////////////////
-		// on donne un fichier résultat				//
-		// extraction ligne par ligne				//
-		// check si un bureau est dans la liste		//
-		// 		ajout du candidat + résultat		//
-		// sinon création d'un nouveau bureau		//
-		//		ajout candidat + résultat			//
-		// 											//
-		//////////////////////////////////////////////
-		
 	}
 
 	private String nom;
 	private List< bureau > liste_bureau = new ArrayList< bureau >();
 	private Map< String, String > liste_nuances;
-
-	public void getReportVoix(){
-	}
-	
-	public bureau getNomBureau(){
-		return null;
-	}
-	
-	public void parseLine( String line, List< String > parsedLine ){
-		
-	}
 }
 
