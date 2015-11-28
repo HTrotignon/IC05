@@ -24,7 +24,7 @@ public class election {
 				    // Debug
 				    System.out.println( line );
 				    				    
-				    int indexBureau = this.liste_bureau.indexOf( Integer.parseInt( parts[1] ) );
+				    int indexBureau = this.liste_bureau.indexOf( newBureau );
 				    
 				    if( -1 != indexBureau ){
 				    	candidat newCandidat = new candidat( parts[8], parts[11] );

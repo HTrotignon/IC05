@@ -37,12 +37,10 @@ public class bureau {
 	private int nb_votants_T2;
 	private int nb_exprimés_T2;
 	
-	private int nb_voix_reportées;
-	
-	Map< candidat, Integer > liste_candidats_T1;
-	Map< candidat, Integer > liste_candidats_T2;
-	
-	List< report > liste_reports;
+	private int nb_voix_reportées = 0;
+	private Map< candidat, Integer > liste_candidats_T1;
+	private Map< candidat, Integer > liste_candidats_T2;
+	private List< report > liste_reports;
 	
 	public void addCandidat( candidat newCandidat, String num_tour ){
 		if( 1 == Integer.parseInt( num_tour ))
@@ -50,16 +48,21 @@ public class bureau {
 		else
 			{ this.liste_candidats_T2.put( newCandidat, Integer.parseInt( num_tour )); }
 	}
-	
+
 	public void calculReportV1() {
-		
 		this.liste_candidats_T1.forEach(( candidat1 , nb_voix1 ) -> {
-			this.liste_candidats_T2.forEach(( candidat2, nb_voix2 ) -> {
-				if( candidat1 != candidat2 ) {
-					report newReport = new report( candidat1.getNuance(), candidat2.getNuance(), (double)( nb_voix2*nb_voix1/nb_exprimés_T2 ));
-					liste_reports.add( newReport );
-				}
-			});
+			if( false == liste_candidats_T2.containsKey( candidat1 )) {
+				this.liste_candidats_T2.forEach(( candidat2, nb_voix2 ) -> {
+					// on considère que les votants pour les candidats T2 ont aussi voté pour eux au T1
+						report newReport = new report( candidat1.getNuance(), candidat2.getNuance(), (double)( nb_voix2*nb_voix1/nb_exprimés_T2 ));
+						liste_reports.add( newReport );
+						nb_voix_reportées += nb_voix1;
+				});
+			}
+		});
+		
+		liste_reports.forEach( report -> {
+			report.setReport( report.getReport()/nb_voix_reportées );
 		});
 	}
 }
