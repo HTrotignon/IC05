@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-
 public class election {
 	
 	public election( String nomElection, String nomFichier ) {
@@ -51,5 +50,10 @@ public class election {
 	private List< bureau > liste_bureau = new ArrayList< bureau >();
 	private List< String > liste_nuances = new ArrayList< String >();
 	private Map< String, Map< String, Integer >> liste_reports; // nuance origine, nuances cibles, % de report
+	
+	public static void main( String args[] ) {
+		election myElection = new election( "toto", "/home/rezuru/workspace-IC05/clean/00-LG02.txt" );
+		
+	}
 }
 
