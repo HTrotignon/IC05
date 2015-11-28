@@ -12,7 +12,7 @@ public class election {
 		this.nom = nomElection;
 		try {
 			Scanner scanner = new Scanner( new File( nomFichier ));
-				 
+			
 			try {
 				// Lecture du fichier ligne par ligne. Cette boucle se termine
 				// quand la méthode retourne la valeur null.
@@ -34,10 +34,8 @@ public class election {
 				    	this.liste_bureau.add( newBureau );
 				    }
 				    
-//				    if( false != this.liste_nuances.containsKey( parts[11] )){
-//				    	this.liste_nuances.put( parts[11], value );
-//				    }
-				    
+				    if( -1 == this.liste_nuances.indexOf( parts[11] ) )
+				    	{ this.liste_nuances.add( parts[11] ); }
 				}
 			} finally {
 			// dans tous les cas, on ferme nos flux
@@ -51,7 +49,7 @@ public class election {
 
 	private String nom;
 	private List< bureau > liste_bureau = new ArrayList< bureau >();
-	private 
-	Map< String, Map< String, Integer >> liste_reports; // nuance origine, nuance cible, % de report
+	private List< String > liste_nuances = new ArrayList< String >();
+	private Map< String, Map< String, Integer >> liste_reports; // nuance origine, nuances cibles, % de report
 }
 
