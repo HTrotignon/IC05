@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,11 +79,62 @@ public class election {
 	Map< String, bureau > liste_bureau = new HashMap< String, bureau >();
 
 	private List< String > liste_nuances = new ArrayList< String >();
-	private Map< String, Map< String, Integer >> liste_reports; // nuance origine, nuances cibles, % de report
+	//private Map< String, Map< String, Integer >> liste_reports; // nuance origine, nuances cibles, % de report
+	
+	private void exportToCSV( String fichierCible ) {
+		System.out.println( "Début export" );
+		
+		String fileRatio = "/tempo/workSets/ratio_" + fichierCible;
+		String fileNbVoix = "/tempo/workSets/nbVoix_" + fichierCible;
+		
+		try {
+			FileWriter writerRatio = new FileWriter( fileRatio );
+			FileWriter writerNbVoix = new FileWriter( fileNbVoix );
+			
+			writerRatio.append( "Source" );
+			writerRatio.append(',');
+			writerRatio.append( "Target" );
+			writerRatio.append(',');
+			writerRatio.append( "pourcentage report" );
+			writerRatio.append('\n');
+			
+			this.liste_bureau.forEach( ( id, bureau ) -> {
+				bureau.getListe_reports().forEach( ( report ) -> {
+					try {
+						writerRatio.append( report.getNuance_origine() );
+						writerRatio.append(',');
+						writerRatio.append( report.getNuance_cible() );
+						writerRatio.append(',');
+						writerRatio.append( Double.toString( report.getRatio_report() ));
+						writerRatio.append('\n');
+						
+						writerNbVoix.append( report.getNuance_origine() );
+						writerNbVoix.append(',');
+						writerNbVoix.append( report.getNuance_cible() );
+						writerNbVoix.append(',');
+						writerNbVoix.append( Integer.toString( report.getNb_voix_reportées() ));
+						writerNbVoix.append('\n');
+					} catch(IOException e) {
+					     e.printStackTrace();
+					}
+				});
+			});
+			writerRatio.flush();
+			writerRatio.close();
+			
+			writerNbVoix.flush();
+			writerNbVoix.close();
+			
+			System.out.println( "Fin export" );
+		} catch(IOException e) {
+		     e.printStackTrace();
+		}
+	}
 	
 	public static void main( String args[] ) {
 		election myElection = new election( "toto", "/tempo/workSets/LG07.txt" );
-		myElection.liste_bureau.forEach((id, bureau) -> bureau.calculReportV1() ); 
+		myElection.liste_bureau.forEach((id, bureau) -> bureau.calculReportV1() );
+		myElection.exportToCSV( "1st_try.csv" );
 	}
 }
 

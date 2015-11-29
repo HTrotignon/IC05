@@ -14,6 +14,18 @@ public class report {
 		this.ratio_report = ratioReport;
 	}
 
+	public String getNuance_origine() {
+		return nuance_origine;
+	}
+
+	public String getNuance_cible() {
+		return nuance_cible;
+	}
+
+	public int getNb_voix_reportées() {
+		return nb_voix_reportées;
+	}
+
 	private String nuance_origine;
 	private String nuance_cible;
 	private Double ratio_report;

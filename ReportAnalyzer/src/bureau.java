@@ -31,6 +31,7 @@ public class bureau {
 	private int nb_exprimés_T2 = 0;
 	
 	private int nb_voix_reportées = 0;
+	private double somme_reports = 0;
 	private Map< candidat, Integer > liste_candidats_T1 = new HashMap< candidat, Integer >();
 	private Map< candidat, Integer > liste_candidats_T2 = new HashMap< candidat, Integer >();
 	private List< report > liste_reports = new ArrayList< report >();
@@ -43,8 +44,12 @@ public class bureau {
 			{ liste_candidats_T2.put( newCandidat, nb_voix ); }
 	}
 
+	public List<report> getListe_reports() {
+		return liste_reports;
+	}
+
 	public void calculReportV1() {
-		System.out.println( "BEGIN" );
+		//System.out.println( "BEGIN" );
 		this.liste_candidats_T1.forEach(( candidat1 , nb_voix1 ) -> {
 			//System.out.println( " T1 " + candidat1.getNuance() + " voix : " + nb_voix1 );
 			if( false == liste_candidats_T2.containsKey( candidat1 )) {
@@ -62,10 +67,11 @@ public class bureau {
 		
 		liste_reports.forEach((report) -> {
 			report.setRatio_report( report.getRatio_report()/nb_voix_reportées );
-			//System.out.println( nb_voix_reportées );
-			System.out.println( Double.toString( report.getRatio_report() ));
+			somme_reports += report.getRatio_report();
+			//System.out.println( Double.toString( report.getRatio_report() ));
 		});
-		System.out.println( "END" );
+		//System.out.println( somme_reports );
+		//System.out.println( "END" );
 	}
 	
 	public int getNb_votants_T1() {
