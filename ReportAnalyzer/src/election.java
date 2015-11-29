@@ -17,28 +17,15 @@ public class election {
 				// quand la méthode retourne la valeur null.
 				while( scanner.hasNextLine() ) {
 				    String line = scanner.nextLine();
-				    String[] parts = line.split( ";" );
+				    String[] parts = line.split( "\\s" );
 
 				    // Debug
 				    //System.out.println( line );
 
 				    checkAndAddBureau( parts );
 
-//				    int indexBureau = this.liste_bureau.indexOf( newBureau );
-//				    this.liste_bureau.contains( newBureau );
-//				    
-//				    
-//				    if( false == this.liste_bureau.contains( newBureau )) {
-//				    	System.out.println( "if" );
-//				    	newBureau.addCandidat( newCandidat, Integer.parseInt( parts[0] ), Double.parseDouble( parts[12] ));
-//				    	this.liste_bureau.add( newBureau );
-//				    }
-//				    else
-//				    	{ System.out.println( "else" );
-//				    	this.liste_bureau.get( indexBureau ).addCandidat( newCandidat, Integer.parseInt( parts[0] ), Double.parseDouble( parts[12] )); }
-			
-				    if( -1 == this.liste_nuances.indexOf( parts[11] ) )
-				    	{ this.liste_nuances.add( parts[11] ); }
+				    if( -1 == this.liste_nuances.indexOf( parts[9] ) )
+				    	{ this.liste_nuances.add( parts[9] ); }
 				}
 			} finally {
 			// dans tous les cas, on ferme nos flux
@@ -51,75 +38,40 @@ public class election {
 	}
 
 	private void checkAndAddBureau( String[] sBureau ) {
-		System.out.println( "\ncheck" );
-		// TODO Auto-generated method stub
-		bureau newBureau = new bureau( sBureau );
-	    candidat newCandidat = new candidat( sBureau[8], sBureau[11] );
-	    Boolean isBureauPresent = false;
-	    
-	    if( liste_bureau.isEmpty() ){
-	    	System.out.println( "empty" );
-	    	newBureau.addCandidat( newCandidat, Integer.parseInt( sBureau[0] ), Double.parseDouble( sBureau[12] ));
-			liste_bureau.add( newBureau );
+		candidat newCandidat = new candidat( sBureau[8], sBureau[9] );
+		
+	    if( liste_bureau.containsKey( sBureau[0] )) {
+	    	// on met à jour le nombre de votants dans le bureau. Réalisé 1 fois par bureau
+	    	if(( 1 == Integer.parseInt( sBureau[1] )) & ( 0 == liste_bureau.get( sBureau[0] ).getNb_votants_T1() ))
+	    	{
+	    		liste_bureau.get( sBureau[0] ).setNb_votants_T1( Integer.parseInt( sBureau[6] ));
+	    		liste_bureau.get( sBureau[0] ).setNb_exprimés_T1( Integer.parseInt( sBureau[7] ));
+	    	}
+	    	else if(( 2 == Integer.parseInt( sBureau[1] )) & ( 0 == liste_bureau.get( sBureau[0] ).getNb_votants_T2() ))
+	    	{
+	    		liste_bureau.get( sBureau[0] ).setNb_votants_T2( Integer.parseInt( sBureau[6] ));
+	    		liste_bureau.get( sBureau[0] ).setNb_exprimés_T2( Integer.parseInt( sBureau[7] ));
+	    	}
+	    	
+	    	//System.out.println( "id bureau existant. Ajour candidat" );
+	    	liste_bureau.get( sBureau[0] ).addCandidat(newCandidat, Integer.parseInt( sBureau[1] ), Integer.parseInt( sBureau[10] ));
 	    }
 	    else {
-	    	liste_bureau.forEach( (bureau) -> {
-	    		if( bureau.getId().equals( newBureau.getId() )) {
-	    			System.out.println( "bureau present" );
-	    			isBureauPresent = true;
-	    			bureau.addCandidat(newCandidat, Integer.parseInt( sBureau[0] ), Double.parseDouble( sBureau[12] ));
-	    		}
-	    	});
-	    	
-	    	System.out.println( "not empty" );
-	    	for( int i = 0; i < liste_bureau.size(); i++){
-	    		System.out.println( "for" );
-	    		System.out.println( "id liste = " + liste_bureau.get( i ).getId() );
-	    		System.out.println( "id bureau = " + newBureau.getId() );
-	    		
-	    		if( liste_bureau.get( i ).getId().equals( newBureau.getId() ) )
-	    			{ 
-	    			System.out.println( "bureau present" );
-	    			isBureauPresent = true;
-	    			liste_bureau.get( i ).addCandidat(newCandidat, Integer.parseInt( sBureau[0] ), Double.parseDouble( sBureau[12] ));
-	    			
-	    			}
-	    		
+	    	bureau newBureau = new bureau ( sBureau );
+	    	if( 1 == Integer.parseInt( sBureau[1] ))
+	    	{
+	    		newBureau.setNb_votants_T1( Integer.parseInt( sBureau[6] ));
+	    		newBureau.setNb_exprimés_T1( Integer.parseInt( sBureau[7] ));
 	    	}
-	    	
-	    	if( false == isBureauPresent ) {
-	    		System.out.println( "bureau absent" );
-	    		newBureau.addCandidat( newCandidat, Integer.parseInt( sBureau[0] ), Double.parseDouble( sBureau[12] ));
-		    	this.liste_bureau.add( newBureau );
+	    	else if( 2 == Integer.parseInt( sBureau[1] ))
+	    	{
+	    		newBureau.setNb_votants_T2( Integer.parseInt( sBureau[6] ));
+	    		newBureau.setNb_exprimés_T2( Integer.parseInt( sBureau[7] ));
 	    	}
+	    	//System.out.println( "nouveau bureau, ajout dans la map" );
 	    	
-//		    int indexBureau = this.liste_bureau.indexOf( newBureau );
-//		    if( -1 == indexBureau ) {
-//		    	System.out.println( "if" );
-//		    	newBureau.addCandidat( newCandidat, Integer.parseInt( sBureau[0] ), Double.parseDouble( sBureau[12] ));
-//		    	this.liste_bureau.add( newBureau );
-//		    }
-//		    else {
-//		    	System.out.println( "else" );
-//		    	this.liste_bureau.get( indexBureau ).addCandidat( newCandidat, Integer.parseInt( sBureau[0] ), Double.parseDouble( sBureau[12] ));
-//		    }
+	    	liste_bureau.put( sBureau[0], newBureau );
 	    }
-	    System.out.println( "end-check" );
-	    
-	    
-//	    liste_bureau.forEach( (bureau) -> {
-//	    	System.out.println( "itération sur la liste" );
-//			String pwet = Integer.toString( bureau.getCode_dpt() ) + Integer.toString( bureau.getCode_commune() ) + Integer.toString( bureau.getNum_bureau() );
-//			if( ( sBureau[1] + sBureau[2] + sBureau[4] )  == pwet)
-//				{ 
-//				System.out.println( "bureau présent" );
-//				bureau.addCandidat(newCandidat, Integer.parseInt( sBureau[0] ), Double.parseDouble( sBureau[12] )); }
-//			else {
-//				System.out.println( "new bureau" );
-//				newBureau.addCandidat( newCandidat, Integer.parseInt( sBureau[0] ), Double.parseDouble( sBureau[12] ));
-//				liste_bureau.add( newBureau );
-//			}
-//		});
 	}
 
 	private String nom;
@@ -129,7 +81,7 @@ public class election {
 	private Map< String, Map< String, Integer >> liste_reports; // nuance origine, nuances cibles, % de report
 	
 	public static void main( String args[] ) {
-		election myElection = new election( "toto", "/tempo/workSets/LG07-bureaux/10-01-001-0001.txt" );
+		election myElection = new election( "toto", "/tempo/workSets/LG07.txt" );
 		myElection.liste_bureau.forEach((id, bureau) -> bureau.calculReportV1() ); 
 	}
 }
