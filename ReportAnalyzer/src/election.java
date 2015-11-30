@@ -14,15 +14,20 @@ public class election {
 		try {
 			Scanner scanner = new Scanner( new File( nomFichier ));
 			try {
-				// Lecture du fichier ligne par ligne. Cette boucle se termine
-				// quand la méthode retourne la valeur null.
+				// Lecture du fichier ligne par ligne. Cette boucle se termine quand la méthode retourne la valeur null.
 				while( scanner.hasNextLine() ) {
 				    String line = scanner.nextLine();
-				    String[] parts = line.split( "\\s" );
-
 				    // Debug
 				    //System.out.println( line );
-
+				    
+				    //////////////////////////////////////////////////////////////////////
+				    // penser à modifier le séparateur en fonction du fichier à traiter //
+				    //////////////////////////////////////////////////////////////////////
+				    
+				    // séparateur "\\s" : CN01, CN04, CN08, CN11, DP15, LG02, LG07, LG12, RG04, RG10
+				    // séparateur ";"	: MN08, 
+				    // séparateur "tab"	: MN14, 
+				    String[] parts = line.split( "\\s" );
 				    checkAndAddBureau( parts );
 
 				    if( -1 == this.liste_nuances.indexOf( parts[9] ) )
@@ -84,19 +89,27 @@ public class election {
 	private void exportToCSV( String fichierCible ) {
 		System.out.println( "Début export" );
 		
-		String fileRatio = "/tempo/workSets/ratio_" + fichierCible;
-		String fileNbVoix = "/tempo/workSets/nbVoix_" + fichierCible;
+		String fileRatio = "/tempo/workSets/ratio_" + fichierCible + ".csv";
+		String fileNbVoix = "/tempo/workSets/nbVoix_" + fichierCible + ".csv";
 		
 		try {
 			FileWriter writerRatio = new FileWriter( fileRatio );
 			FileWriter writerNbVoix = new FileWriter( fileNbVoix );
 			
+			//ajout des labels colonnes
 			writerRatio.append( "Source" );
 			writerRatio.append(',');
 			writerRatio.append( "Target" );
 			writerRatio.append(',');
 			writerRatio.append( "pourcentage report" );
 			writerRatio.append('\n');
+			
+			writerNbVoix.append( "Source" );
+			writerNbVoix.append(',');
+			writerNbVoix.append( "Target" );
+			writerNbVoix.append(',');
+			writerNbVoix.append( "nombre report" );
+			writerNbVoix.append('\n');
 			
 			this.liste_bureau.forEach( ( id, bureau ) -> {
 				bureau.getListe_reports().forEach( ( report ) -> {
@@ -131,10 +144,14 @@ public class election {
 		}
 	}
 	
+	public String getNom() {
+		return nom;
+	}
+
 	public static void main( String args[] ) {
-		election myElection = new election( "toto", "/tempo/workSets/LG07.txt" );
+		election myElection = new election( "LG12", "/tempo/IC05-workSets/LG12.txt" );
 		myElection.liste_bureau.forEach((id, bureau) -> bureau.calculReportV1() );
-		myElection.exportToCSV( "1st_try.csv" );
+		myElection.exportToCSV( myElection.getNom() );
 	}
 }
 

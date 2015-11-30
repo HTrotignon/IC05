@@ -67,8 +67,9 @@ public class bureau {
 		
 		liste_reports.forEach((report) -> {
 			report.setRatio_report( report.getRatio_report()/nb_voix_reportées );
+			report.setNb_voix_reportées( (int)(nb_inscrits*report.getRatio_report()) );
 			somme_reports += report.getRatio_report();
-			//System.out.println( Double.toString( report.getRatio_report() ));
+			//System.out.println( Integer.toString( report.getNb_voix_reportées() ));
 		});
 		//System.out.println( somme_reports );
 		//System.out.println( "END" );
