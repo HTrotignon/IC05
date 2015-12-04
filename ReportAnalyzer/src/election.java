@@ -87,6 +87,7 @@ public class election {
 	}
 
 	Map< String, bureau > liste_bureau = new HashMap< String, bureau >();
+	List< report > liste_reports = new ArrayList< report >();
 	private List< String > liste_nuances = new ArrayList< String >();
 	private String nom;
 	private String date_début;
@@ -108,7 +109,13 @@ public class election {
 		return nom;
 	}
 	
-	private List< bureau > getBureauxDpt( String numDpt ){
+	private void sommeReports() {
+		this.liste_bureau.forEach( ( id, bureau ) -> {
+			System.out.println("toto");
+		});
+	}
+	
+	private List< bureau > getBureauxDpt( String numDpt ) {
 		System.out.println( "getBureauDpt :: BEGIN" );
 		List< bureau > listeDpt = new ArrayList< bureau >();
 		
