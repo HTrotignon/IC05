@@ -26,12 +26,12 @@ public class bureau {
 	private int nb_inscrits;
 
 	private int nb_votants_T1 = 0;
-	private int nb_exprimÃ©s_T1 = 0;
+	private int nb_exprimés_T1 = 0;
 	
 	private int nb_votants_T2 = 0;
-	private int nb_exprimÃ©s_T2 = 0;
+	private int nb_exprimés_T2 = 0;
 	
-	private int nb_voix_reportÃ©es = 0;
+	private int nb_voix_reportées = 0;
 	private double somme_reports = 0;
 	private Map< candidat, Integer > liste_candidats_T1 = new HashMap< candidat, Integer >();
 	private Map< candidat, Integer > liste_candidats_T2 = new HashMap< candidat, Integer >();
@@ -43,23 +43,23 @@ public class bureau {
 		
 		if( 1 == numTour ) {
 			this.addCandidat( abstention, numTour, this.getNb_inscrits()-this.getNb_votants_T1() ); 
-			this.addCandidat( blancsNuls, numTour, this.getNb_votants_T1()-this.getNb_exprimÃ©s_T1() );
+			this.addCandidat( blancsNuls, numTour, this.getNb_votants_T1()-this.getNb_exprimés_T1() );
 		}
 		else {
 			this.addCandidat( abstention, numTour, this.getNb_inscrits()-this.getNb_votants_T2() ); 
-			this.addCandidat( blancsNuls, numTour, this.getNb_votants_T2()-this.getNb_exprimÃ©s_T2() );
+			this.addCandidat( blancsNuls, numTour, this.getNb_votants_T2()-this.getNb_exprimés_T2() );
 		}
 	}
 	
 	public void addCandidat( candidat newCandidat, int numTour, int nbVoix ){
-		// grosse dÃ©gueulasserie de l'enfer \o/
+		// grosse dégueulasserie de l'enfer \o/
 		
 		switch( newCandidat.getNuance() ){
 		case "MNR" :
 		case "EXD" :
 		case "LEXD" :
 		case "BC-EXD" :
-			newCandidat.setNuance( "ExtrÃªme Droite" );
+			newCandidat.setNuance( "Extrême Droite" );
 			break;
 		case "FN" :
 		case "LFN" :
@@ -165,7 +165,7 @@ public class bureau {
 		case "LO" :	
 		case "LXG" :	
 		case "BC-EXG" :
-			newCandidat.setNuance( "ExtrÃªme Gauche" );
+			newCandidat.setNuance( "Extrême Gauche" );
 			break;
 	}
 		
@@ -188,21 +188,21 @@ public class bureau {
 			if( false == liste_candidats_T2.containsKey( candidat1 )) {
 				this.liste_candidats_T2.forEach(( candidat2, nb_voix2 ) -> {
 						//System.out.println( " T2 " + candidat2.getNuance() + " voix : " + nb_voix2 );
-					// on considÃ¨re que les votants pour les candidats T2 ont aussi votÃ© pour eux au T1
-						//System.out.println( nb_exprimÃ©s_T2 );
+					// on considÃ¨re que les votants pour les candidats T2 ont aussi voté pour eux au T1
+						//System.out.println( nb_exprimés_T2 );
 						report newReport = new report( candidat1.getNuance(), candidat2.getNuance(), (double)nb_voix2*nb_voix1/nb_inscrits );
 						liste_reports.add( newReport );
-						nb_voix_reportÃ©es += nb_voix1;
+						nb_voix_reportées += nb_voix1;
 						//System.out.println( Integer.toString( nb_voix1 ));
 				});
 			}
 		});
 		
 		liste_reports.forEach((report) -> {
-			report.setRatio_report( report.getRatio_report()/nb_voix_reportÃ©es );
-			report.setNb_voix_reportÃ©es( (int)(nb_inscrits*report.getRatio_report()) );
+			report.setRatio_report( report.getRatio_report()/nb_voix_reportées );
+			report.setNb_voix_reportées( (int)(nb_inscrits*report.getRatio_report()) );
 			somme_reports += report.getRatio_report();
-			//System.out.println( Integer.toString( report.getNb_voix_reportÃ©es() ));
+			//System.out.println( Integer.toString( report.getNb_voix_reportées() ));
 		});
 		//System.out.println( somme_reports );
 		//System.out.println( "END" );
@@ -224,20 +224,20 @@ public class bureau {
 		this.nb_votants_T2 = nb_votants_T2;
 	}
 
-	public int getNb_exprimÃ©s_T1() {
-		return nb_exprimÃ©s_T1;
+	public int getNb_exprimés_T1() {
+		return nb_exprimés_T1;
 	}
 
-	public void setNb_exprimÃ©s_T1(int nb_exprimÃ©s_T1) {
-		this.nb_exprimÃ©s_T1 = nb_exprimÃ©s_T1;
+	public void setNb_exprimés_T1(int nb_exprimés_T1) {
+		this.nb_exprimés_T1 = nb_exprimés_T1;
 	}
 
-	public int getNb_exprimÃ©s_T2() {
-		return nb_exprimÃ©s_T2;
+	public int getNb_exprimés_T2() {
+		return nb_exprimés_T2;
 	}
 
-	public void setNb_exprimÃ©s_T2(int nb_exprimÃ©s_T2) {
-		this.nb_exprimÃ©s_T2 = nb_exprimÃ©s_T2;
+	public void setNb_exprimés_T2(int nb_exprimés_T2) {
+		this.nb_exprimés_T2 = nb_exprimés_T2;
 	}
 
 	public int getNb_inscrits() {
