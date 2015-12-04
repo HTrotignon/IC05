@@ -202,7 +202,7 @@ public class election {
 	
 
 	private void exportToGEXF( String fichierCible ) {
-		System.out.println( "D�but export to GEXF" );
+		System.out.println( "Début export to GEXF" );
 		try {
 			FileWriter writerRatio = new FileWriter( fichierCible, true );
 			
@@ -221,20 +221,23 @@ public class election {
 			writerRatio.append( "\t\t\t<node id=\"Union de la droite\" label=\"RPR, UMP, MAJ, LDD, LMAJ, M-NC, M, LUMP, BC-UMP\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Centre\" label=\"UDF, MDC, PRG, PREP, RDG, LDR, UDFD, LCMD, LMC, MGC, MODM, CEN, ALLI, NCE, LMDM, LUC, LUDI, BC-MDM, BC-UC, BC-UDI\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Divers\" label=\"DIV, CPNT, LDV, LCP, AUT, LAUT, LDIV, BC-DIV\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"R�gionalistes\" label=\"REG, LREG\"/> \n");
+			writerRatio.append( "\t\t\t<node id=\"Régionalistes\" label=\"REG, LREG\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Ecologistes\" label=\"ECO, VEC, LEC, LVE, LVEC, BC-VEC\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Parti Socialiste\" label=\"SOC, LGA, LSOC, BC-SOC\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Divers Gauche\" label=\"DVG, LDG, LUG, LDVG, BC-UG, BC-RDG, BC-DVG\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Front de gauche\" label=\"COM, LCOM, LCOP, PG, FG, LFG, LPG, BC-FG, BC-PG, BC-COM\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Extreme Gauche\" label=\"EXG, LEXG, LCR, LO, LXG, BC-EXG\"/> \n");
 			writerRatio.append( "\t\t</nodes>\n" );
+			writerRatio.append( "\t\t<attributes class=\"edge\" mode=\"dynamic\">\n" );
+			writerRatio.append( "\t\t\t<attribute id=\"weight\" title=\"weight\" type=\"double\">\n" );
+			writerRatio.append( "\t\t</attributes>\n" );
 			writerRatio.append( "\t\t<edges>\n" );
 			
 			//ajout des infos
 			this.liste_bureau.forEach( ( id, bureau ) -> {
 				bureau.getListe_reports().forEach( ( report ) -> {
 					try {
-						writerRatio.append( "\t\t\t<edge  source=\"" + report.getNuance_origine() + "\" target=\"" + report.getNuance_cible() + "\" weight=\"" + Double.toString( report.getRatio_report()) + "\" start=\"" + this.getDateDebut() + "\" fin=\"" + this.getDateFin() + "\"/>\n");
+						writerRatio.append( "\t\t\t<edge  source=\"" + report.getNuance_origine() + "\" target=\"" + report.getNuance_cible() + "\" weight=\"" + Double.toString( report.getNb_voix_reportées()) + "\" start=\"" + this.getDateDebut() + "\" fin=\"" + this.getDateFin() + "\"/>\n");
 					} catch(IOException e) {
 					     e.printStackTrace();
 					}
@@ -325,8 +328,8 @@ public class election {
 	
 	public static void main( String args[] ) {
 		
-		election CN01 = new election( "CN01", "C:\\Users\\Piers Barrios\\Dropbox\\IC05 - Reports de voix\\BDD Clean\\CN01.txt", "2001-01-01", "2001-12-31" );
-//		election CN04 = new election( "CN04", "/tempo/IC05-workSets/CN04/CN04.txt", "2004-01-01", "2004-12-31" );
+//		election CN01 = new election( "CN01", "C:\\Users\\Piers Barrios\\Dropbox\\IC05 - Reports de voix\\BDD Clean\\CN01.txt", "2001-01-01", "2001-12-31" );
+		election CN04 = new election( "CN04", "/tempo/IC05-workSets/CN04/CN04.txt", "2004-01-01", "2004-12-31" );
 //		election CN08 = new election( "CN08", "/tempo/IC05-workSets/CN08/CN08.txt", "2008-01-01", "2008-12-31" );
 //		election CN11 = new election( "CN11", "/tempo/IC05-workSets/CN11/CN11.txt", "2011-01-01", "2011-12-31" );
 //		election DP15 = new election( "DP15", "/tempo/IC05-workSets/DP15/DP15.txt", "2015" );
@@ -339,8 +342,8 @@ public class election {
 		
 		List< election > daList = new ArrayList< election >();
 		
-		daList.add( CN01 );
-//		daList.add( CN04 );
+//		daList.add( CN01 );
+		daList.add( CN04 );
 //		daList.add( CN08 );
 //		daList.add( CN11 );
 //		daList.add( DP15 );
@@ -357,11 +360,11 @@ public class election {
 
 			election.liste_bureau.forEach((id, bureau) -> bureau.calculReportV1() );
 			//election.exportToCSV( "C:\\Piers\\UV UTC\\IC05\\CSV\\CN01.csv" );
-			election.exportToGEXF("C:\\Piers\\UV UTC\\IC05\\GEXF\\CN01.gexf");
+			//election.exportToGEXF("C:\\Piers\\UV UTC\\IC05\\GEXF\\CN01.gexf");
 			
 //			daListeDpt.addAll( election.getBureauxDpt( "60" ));
 //			election.liste_bureau.forEach((id, bureau) -> bureau.calculReportV1() );
-//			election.exportToCSV( "/tempo/IC05-workSets/CN04.csv" );
+			election.exportToGEXF( "/tempo/IC05-workSets/CN04.gexf" );
 //			election.exportToCSV( "/tempo/IC05-workSets/CN04_60.csv", daListeDpt );
 		});
 		

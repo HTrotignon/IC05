@@ -59,7 +59,7 @@ public class bureau {
 		case "EXD" :
 		case "LEXD" :
 		case "BC-EXD" :
-			newCandidat.setNuance( "Extr�me Droite" );
+			newCandidat.setNuance( "Extrême Droite" );
 			break;
 		case "FN" :
 		case "LFN" :
@@ -165,7 +165,7 @@ public class bureau {
 		case "LO" :	
 		case "LXG" :	
 		case "BC-EXG" :
-			newCandidat.setNuance( "Extr�me Gauche" );
+			newCandidat.setNuance( "Extrême Gauche" );
 			break;
 	}
 		
@@ -201,8 +201,8 @@ public class bureau {
 		liste_reports.forEach((report) -> {
 			report.setRatio_report( report.getRatio_report()/nb_voix_reportées );
 			report.setNb_voix_reportées( (int)(nb_inscrits*report.getRatio_report()) );
-			somme_reports += report.getRatio_report();
-			//System.out.println( Integer.toString( report.getNb_voix_report�es() ));
+			//somme_reports += report.getRatio_report();
+			//System.out.println( Integer.toString( report.getNb_voix_reportées() ));
 		});
 		//System.out.println( somme_reports );
 		//System.out.println( "END" );

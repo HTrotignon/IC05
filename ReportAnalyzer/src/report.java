@@ -33,6 +33,6 @@ public class report {
 	private String nuance_origine;
 	private String nuance_cible;
 	private Double ratio_report;
-	private int nb_voix_reportées;	// correspond au nombre de voix totales report�es sur le bureau de vote. utile si l'on souhaite pond�rer les % de reports de voix
+	private int nb_voix_reportées;
 
 }
