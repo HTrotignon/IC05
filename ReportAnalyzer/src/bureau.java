@@ -59,7 +59,7 @@ public class bureau {
 		case "EXD" :
 		case "LEXD" :
 		case "BC-EXD" :
-			newCandidat.setNuance( "ExtrÃªme Droite" );
+			newCandidat.setNuance( "Extrême Droite" );
 			break;
 		case "FN" :
 		case "LFN" :
@@ -165,7 +165,7 @@ public class bureau {
 		case "LO" :	
 		case "LXG" :	
 		case "BC-EXG" :
-			newCandidat.setNuance( "ExtrÃªme Gauche" );
+			newCandidat.setNuance( "Extrême Gauche" );
 			break;
 	}
 		
@@ -242,6 +242,10 @@ public class bureau {
 
 	public int getNb_inscrits() {
 		return nb_inscrits;
+	}
+	
+	public String getCode_dpt() {
+		return code_dpt;
 	}
 }
  
