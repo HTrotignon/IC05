@@ -15,7 +15,7 @@ public class bureau {
 		this.num_bureau = ligneResultat[4];
 		this.nb_inscrits = Integer.parseInt( ligneResultat[5] );
 		
-		candidat newCandidat = new candidat( ligneResultat[8], ligneResultat[9] );
+		candidat newCandidat = new candidat( ligneResultat[8], ligneResultat[9] );		
 		this.addCandidat( newCandidat, Integer.parseInt( ligneResultat[1] ), Integer.parseInt( ligneResultat[10] ));
 	}
 
@@ -24,6 +24,7 @@ public class bureau {
 	private String num_bureau;
 	
 	private int nb_inscrits;
+
 	private int nb_votants_T1 = 0;
 	private int nb_exprimés_T1 = 0;
 	
@@ -35,13 +36,145 @@ public class bureau {
 	private Map< candidat, Integer > liste_candidats_T1 = new HashMap< candidat, Integer >();
 	private Map< candidat, Integer > liste_candidats_T2 = new HashMap< candidat, Integer >();
 	private List< report > liste_reports = new ArrayList< report >();
+
+	public void addAbstention( int numTour) {
+		candidat abstention = new candidat( "666666", "abstention" );
+		candidat blancsNuls = new candidat( "7777777", "blancs et nuls" );
+		
+		if( 1 == numTour ) {
+			this.addCandidat( abstention, numTour, this.getNb_inscrits()-this.getNb_votants_T1() ); 
+			this.addCandidat( blancsNuls, numTour, this.getNb_votants_T1()-this.getNb_exprimés_T1() );
+		}
+		else {
+			this.addCandidat( abstention, numTour, this.getNb_inscrits()-this.getNb_votants_T2() ); 
+			this.addCandidat( blancsNuls, numTour, this.getNb_votants_T2()-this.getNb_exprimés_T2() );
+		}
+	}
 	
-	public void addCandidat( candidat newCandidat, int num_tour, int nb_voix ){
+	public void addCandidat( candidat newCandidat, int numTour, int nbVoix ){
+		// grosse dégueulasserie de l'enfer \o/
+		
+		switch( newCandidat.getNuance() ){
+		case "MNR" :
+		case "EXD" :
+		case "LEXD" :
+		case "BC-EXD" :
+			newCandidat.setNuance( "Extrême Droite" );
+			break;
+		case "FN" :
+		case "LFN" :
+		case "BC-FN" :
+			newCandidat.setNuance( "Front National" );
+			break;
+		case "RPF" :
+		case "DVD" :
+		case "DL" :
+		case "MPF" :
+		case "LDVD" :
+		case "PRV" :
+		case "BC-UD" :
+		case "BC-DLF" :
+		case "BC-DVD" :
+			newCandidat.setNuance( "Divers Droite" );
+			break;
+		case "RPR" :
+		case "UMP" :
+		case "MAJ" :
+		case "LDD" :
+		case "LMAJ" :
+		case "M-NC" :
+		case "M" :
+		case "LUMP" :
+		case "BC-UMP" :
+			newCandidat.setNuance( "Union de la Droite" );
+			break;
+		case "UDF" :
+		case "MDC" :
+		case "PRG" :
+		case "PREP" :
+		case "RDG" :
+		case "LDR" :
+		case "UDFD" :
+		case "LCMD" :
+		case "LMC" :
+		case "LGC" :
+		case "MODM" :
+		case "CEN" :
+		case "ALLI" :
+		case "NCE" :
+		case "LMDM" :
+		case "LUC" :
+		case "LUDI" :
+		case "BC-MDM" :
+		case "BC-UC" :
+		case "BC-UDI" :	
+			newCandidat.setNuance( "Centre" );
+			break;
+		case "DIV" :
+		case "CPNT" :
+		case "LDV" :
+		case "LCP" :
+		case "AUT" :
+		case "LAUT" :
+		case "LDIV" :
+		case "BC-DIV" :
+			newCandidat.setNuance( "Divers" );
+			break;
+		case "REG" :
+		case "LREG" :
+			newCandidat.setNuance( "Regionalistes" );
+			break;
+		case "ECO" :
+		case "VEC" :
+		case "LEC" :
+		case "LVE" :
+		case "LVEC" :
+		case "BC-VEC" :
+			newCandidat.setNuance( "Ecologistes" );
+			break;
+		case "SOC" :
+		case "LGA" :
+		case "LSOC" :
+		case "BC-SOC" :
+			newCandidat.setNuance( "Parti Socialiste" );
+			break;
+		case "DVG" :
+		case "LDG" :
+		case "LUG" :
+		case "LDVG" :
+		case "BC-UG" :
+		case "BC-RDG" :	
+		case "BC-DVG" :
+			newCandidat.setNuance( "Divers Gauche" );
+			break;
+		case "COM" :	
+		case "LCOM" :	
+		case "LCOP" :	
+		case "PG" :	
+		case "FG" :	
+		case "LFG" :	
+		case "LPG" :	
+		case "BC-FG" :	
+		case "BC-PG" :	
+		case "BC-COM" :	
+			newCandidat.setNuance( "Front de Gauche" );
+			break;
+		case "EXG" :	
+		case "LEXG" :	
+		case "LCR" :	
+		case "LO" :	
+		case "LXG" :	
+		case "BC-EXG" :
+			newCandidat.setNuance( "Extrême Gauche" );
+			break;
+	}
+		
+		
 		//System.out.println( num_tour );
-		if( 1 == num_tour )
-			{ liste_candidats_T1.put( newCandidat, nb_voix ); }
+		if( 1 == numTour )
+			{ liste_candidats_T1.put( newCandidat, nbVoix ); }
 		else
-			{ liste_candidats_T2.put( newCandidat, nb_voix ); }
+			{ liste_candidats_T2.put( newCandidat, nbVoix ); }
 	}
 
 	public List<report> getListe_reports() {
@@ -57,7 +190,7 @@ public class bureau {
 						//System.out.println( " T2 " + candidat2.getNuance() + " voix : " + nb_voix2 );
 					// on considère que les votants pour les candidats T2 ont aussi voté pour eux au T1
 						//System.out.println( nb_exprimés_T2 );
-						report newReport = new report( candidat1.getNuance(), candidat2.getNuance(), (double)nb_voix2*nb_voix1/nb_exprimés_T2 );
+						report newReport = new report( candidat1.getNuance(), candidat2.getNuance(), (double)nb_voix2*nb_voix1/nb_inscrits );
 						liste_reports.add( newReport );
 						nb_voix_reportées += nb_voix1;
 						//System.out.println( Integer.toString( nb_voix1 ));
@@ -105,6 +238,10 @@ public class bureau {
 
 	public void setNb_exprimés_T2(int nb_exprimés_T2) {
 		this.nb_exprimés_T2 = nb_exprimés_T2;
+	}
+
+	public int getNb_inscrits() {
+		return nb_inscrits;
 	}
 }
  
