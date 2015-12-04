@@ -22,17 +22,17 @@ public class report {
 		return nuance_cible;
 	}
 
-	public int getNb_voix_reportÃ©es() {
-		return nb_voix_reportÃ©es;
+	public int getNb_voix_reportées() {
+		return nb_voix_reportées;
 	}
 	
-	public void setNb_voix_reportÃ©es(int nb_voix_reportÃ©es) {
-		this.nb_voix_reportÃ©es = nb_voix_reportÃ©es;
+	public void setNb_voix_reportées(int nb_voix_reportées) {
+		this.nb_voix_reportées = nb_voix_reportées;
 	}
 	
 	private String nuance_origine;
 	private String nuance_cible;
 	private Double ratio_report;
-	private int nb_voix_reportÃ©es;	// correspond au nombre de voix totales reportÃ©es sur le bureau de vote. utile si l'on souhaite pondÃ©rer les % de reports de voix
+	private int nb_voix_reportées;	// correspond au nombre de voix totales reportées sur le bureau de vote. utile si l'on souhaite pondérer les % de reports de voix
 
 }
