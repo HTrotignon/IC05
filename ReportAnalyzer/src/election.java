@@ -11,24 +11,24 @@ public class election {
 	
 	public election( String nomElection, String nomFichier, String dateD, String dateF ) {
 		this.nom = nomElection;
-		this.date_début = dateD;
+		this.date_dÃ©but = dateD;
 		this.date_fin = dateF;
 		try {
 			Scanner scanner = new Scanner( new File( nomFichier ));
 			try {
-				// Lecture du fichier ligne par ligne. Cette boucle se termine quand la méthode retourne la valeur null.
+				// Lecture du fichier ligne par ligne. Cette boucle se termine quand la mÃ©thode retourne la valeur null.
 				while( scanner.hasNextLine() ) {
 				    String line = scanner.nextLine();
 				    // Debug
 				    //System.out.println( line );
 				    
 				    //////////////////////////////////////////////////////////////////////
-				    // penser Ã  modifier le séparateur en fonction du fichier Ã  traiter //
+				    // penser Ã  modifier le sÃ©parateur en fonction du fichier Ã  traiter //
 				    //////////////////////////////////////////////////////////////////////
 				    
-				    // séparateur "\\s" : CN01, CN04, CN08, CN11, DP15, LG02, LG07, LG12, RG04, RG10
-				    // séparateur ";"	: MN08, 
-				    // séparateur "tab"	: MN14, 
+				    // sÃ©parateur "\\s" : CN01, CN04, CN08, CN11, DP15, LG02, LG07, LG12, RG04, RG10
+				    // sÃ©parateur ";"	: MN08, 
+				    // sÃ©parateur "tab"	: MN14, 
 				    String[] parts = line.split( "\\s" );
 				    
 				    checkAndAddBureau( parts );
@@ -51,17 +51,17 @@ public class election {
 		candidat newCandidat = new candidat( sBureau[8], sBureau[9] );
 		
 	    if( liste_bureau.containsKey( sBureau[0] )) {
-	    	// on met Ã  jour le nombre de votants dans le bureau. Réalisé 1 fois par bureau
+	    	// on met Ã  jour le nombre de votants dans le bureau. RÃ©alisÃ© 1 fois par bureau
 	    	if(( 1 == Integer.parseInt( sBureau[1] )) & ( 0 == liste_bureau.get( sBureau[0] ).getNb_votants_T1() ))
 	    	{
 	    		liste_bureau.get( sBureau[0] ).setNb_votants_T1( Integer.parseInt( sBureau[6] ));
-	    		liste_bureau.get( sBureau[0] ).setNb_exprimés_T1( Integer.parseInt( sBureau[7] ));
+	    		liste_bureau.get( sBureau[0] ).setNb_exprimÃ©s_T1( Integer.parseInt( sBureau[7] ));
 	    		liste_bureau.get( sBureau[0] ).addAbstention( 1 );
 	    	}
 	    	else if(( 2 == Integer.parseInt( sBureau[1] )) & ( 0 == liste_bureau.get( sBureau[0] ).getNb_votants_T2() ))
 	    	{
 	    		liste_bureau.get( sBureau[0] ).setNb_votants_T2( Integer.parseInt( sBureau[6] ));
-	    		liste_bureau.get( sBureau[0] ).setNb_exprimés_T2( Integer.parseInt( sBureau[7] ));
+	    		liste_bureau.get( sBureau[0] ).setNb_exprimÃ©s_T2( Integer.parseInt( sBureau[7] ));
 	    		liste_bureau.get( sBureau[0] ).addAbstention( 2 );	    		
 	    	}
 	    	
@@ -73,12 +73,12 @@ public class election {
 	    	if( 1 == Integer.parseInt( sBureau[1] ))
 	    	{
 	    		newBureau.setNb_votants_T1( Integer.parseInt( sBureau[6] ));
-	    		newBureau.setNb_exprimés_T1( Integer.parseInt( sBureau[7] ));
+	    		newBureau.setNb_exprimÃ©s_T1( Integer.parseInt( sBureau[7] ));
 	    	}
 	    	else if( 2 == Integer.parseInt( sBureau[1] ))
 	    	{
 	    		newBureau.setNb_votants_T2( Integer.parseInt( sBureau[6] ));
-	    		newBureau.setNb_exprimés_T2( Integer.parseInt( sBureau[7] ));
+	    		newBureau.setNb_exprimÃ©s_T2( Integer.parseInt( sBureau[7] ));
 	    	}
 	    	//System.out.println( "nouveau bureau, ajout dans la map" );
 	    	
@@ -90,14 +90,14 @@ public class election {
 	List< report > liste_reports = new ArrayList< report >();
 	private List< String > liste_nuances = new ArrayList< String >();
 	private String nom;
-	private String date_début;
+	private String date_dÃ©but;
 	private String date_fin;
 	
 	public String getDateDebut() {
-		return date_début;
+		return date_dÃ©but;
 	}
 	public void setDateDebut(String date) {
-		this.date_début = date;
+		this.date_dÃ©but = date;
 	}
 	public String getDateFin() {
 		return date_fin;
@@ -133,8 +133,8 @@ public class election {
 	}
 	
 	private void exportToCSV( String fichierCible ) {
-		System.out.println( "Début export" );
-
+		System.out.println( "DÃ©but export" );
+		
 //		String fileRatio = "/tempo/IC05-workSets/" + fichierCible + "/ratio_" + fichierCible + ".csv";
 //		String fileNbVoix = "/tempo/IC05-workSets/" + fichierCible + "/nbVoix_" + fichierCible + ".csv";
 		
@@ -149,7 +149,7 @@ public class election {
 			writerRatio.append(',');
 			writerRatio.append( "pourcentage report" );
 			writerRatio.append(',');
-			writerRatio.append( "date début" );
+			writerRatio.append( "date dÃ©but" );
 			writerRatio.append(',');
 			writerRatio.append( "date fin" );
 			writerRatio.append('\n');
@@ -179,7 +179,7 @@ public class election {
 //						writerNbVoix.append(',');
 //						writerNbVoix.append( report.getNuance_cible() );
 //						writerNbVoix.append(',');
-//						writerNbVoix.append( Integer.toString( report.getNb_voix_reportées() ));
+//						writerNbVoix.append( Integer.toString( report.getNb_voix_reportÃ©es() ));
 //						writerNbVoix.append(',');
 //						writerNbVoix.append( this.getDate() );
 //						writerNbVoix.append('\n');
@@ -193,7 +193,7 @@ public class election {
 			
 //			writerNbVoix.flush();
 //			writerNbVoix.close();
-		
+			
 			System.out.println( "Fin export" );
 		} catch(IOException e) {
 		     e.printStackTrace();
@@ -202,7 +202,7 @@ public class election {
 	
 
 	private void exportToGEXF( String fichierCible ) {
-		System.out.println( "Début export to GEXF" );
+		System.out.println( "Dï¿½but export to GEXF" );
 		try {
 			FileWriter writerRatio = new FileWriter( fichierCible, true );
 			
@@ -221,7 +221,7 @@ public class election {
 			writerRatio.append( "\t\t\t<node id=\"Union de la droite\" label=\"RPR, UMP, MAJ, LDD, LMAJ, M-NC, M, LUMP, BC-UMP\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Centre\" label=\"UDF, MDC, PRG, PREP, RDG, LDR, UDFD, LCMD, LMC, MGC, MODM, CEN, ALLI, NCE, LMDM, LUC, LUDI, BC-MDM, BC-UC, BC-UDI\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Divers\" label=\"DIV, CPNT, LDV, LCP, AUT, LAUT, LDIV, BC-DIV\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Régionalistes\" label=\"REG, LREG\"/> \n");
+			writerRatio.append( "\t\t\t<node id=\"Rï¿½gionalistes\" label=\"REG, LREG\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Ecologistes\" label=\"ECO, VEC, LEC, LVE, LVEC, BC-VEC\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Parti Socialiste\" label=\"SOC, LGA, LSOC, BC-SOC\"/> \n");
 			writerRatio.append( "\t\t\t<node id=\"Divers Gauche\" label=\"DVG, LDG, LUG, LDVG, BC-UG, BC-RDG, BC-DVG\"/> \n");
