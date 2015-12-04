@@ -86,27 +86,44 @@ public class election {
 	    }
 	}
 
+	Map< String, bureau > liste_bureau = new HashMap< String, bureau >();
+	private List< String > liste_nuances = new ArrayList< String >();
 	private String nom;
 	private String date_début;
 	private String date_fin;
+	
 	public String getDateDebut() {
 		return date_début;
 	}
-
 	public void setDateDebut(String date) {
 		this.date_début = date;
 	}
 	public String getDateFin() {
 		return date_fin;
 	}
-
 	public void setDateFin(String date) {
 		this.date_fin = date;
 	}
+	public String getNom() {
+		return nom;
+	}
 	
-	
-	Map< String, bureau > liste_bureau = new HashMap< String, bureau >();
-	private List< String > liste_nuances = new ArrayList< String >();
+	private List< bureau > getBureauxDpt( String numDpt ){
+		System.out.println( "getBureauDpt :: BEGIN" );
+		List< bureau > listeDpt = new ArrayList< bureau >();
+		
+		this.liste_bureau.forEach( ( id, bureau ) -> {
+			if( numDpt.equals( bureau.getCode_dpt() )) {
+				System.out.println( bureau.getCode_dpt() );
+				listeDpt.add( bureau );
+			}
+		});
+		
+		listeDpt.forEach( (bureau) -> bureau.calculReportV1());
+		
+		System.out.println( "getBureauDpt :: END" );
+		return listeDpt;
+	}
 	
 	private void exportToCSV( String fichierCible ) {
 		System.out.println( "Début export" );
@@ -176,10 +193,74 @@ public class election {
 		}
 	}
 	
-	public String getNom() {
-		return nom;
+	private void exportToCSV( String fichierCible, List< bureau > listeBureau ) {
+		System.out.println( "Début export" );
+		
+//		String fileRatio = "/tempo/IC05-workSets/" + fichierCible + "/ratio_" + fichierCible + ".csv";
+//		String fileNbVoix = "/tempo/IC05-workSets/" + fichierCible + "/nbVoix_" + fichierCible + ".csv";
+		
+		try {
+			FileWriter writerRatio = new FileWriter( fichierCible, true );
+//			FileWriter writerNbVoix = new FileWriter( fileNbVoix );
+			
+			//ajout des labels colonnes
+			writerRatio.append( "Source" );
+			writerRatio.append(',');
+			writerRatio.append( "Target" );
+			writerRatio.append(',');
+			writerRatio.append( "pourcentage report" );
+			writerRatio.append(',');
+			writerRatio.append( "date début" );
+			writerRatio.append(',');
+			writerRatio.append( "date fin" );
+			writerRatio.append('\n');
+			
+//			writerNbVoix.append( "Source" );
+//			writerNbVoix.append(',');
+//			writerNbVoix.append( "Target" );
+//			writerNbVoix.append(',');
+//			writerNbVoix.append( "nombre report" );
+//			writerNbVoix.append('\n');
+			
+			listeBureau.forEach(( bureau ) -> {
+				bureau.getListe_reports().forEach( ( report ) -> {
+					try {
+						writerRatio.append( report.getNuance_origine() );
+						writerRatio.append(',');
+						writerRatio.append( report.getNuance_cible() );
+						writerRatio.append(',');
+						writerRatio.append( Double.toString( report.getRatio_report() ));
+						writerRatio.append(',');
+						writerRatio.append( this.getDateDebut() );
+						writerRatio.append(',');
+						writerRatio.append( this.getDateFin() );
+						writerRatio.append('\n');
+						
+//						writerNbVoix.append( report.getNuance_origine() );
+//						writerNbVoix.append(',');
+//						writerNbVoix.append( report.getNuance_cible() );
+//						writerNbVoix.append(',');
+//						writerNbVoix.append( Integer.toString( report.getNb_voix_reportées() ));
+//						writerNbVoix.append(',');
+//						writerNbVoix.append( this.getDate() );
+//						writerNbVoix.append('\n');
+					} catch(IOException e) {
+					     e.printStackTrace();
+					}
+				});
+			});
+			writerRatio.flush();
+			writerRatio.close();
+			
+//			writerNbVoix.flush();
+//			writerNbVoix.close();
+			
+			System.out.println( "Fin export" );
+		} catch(IOException e) {
+		     e.printStackTrace();
+		}
 	}
-
+	
 	public static void main( String args[] ) {
 //		election CN01 = new election( "CN01", "/tempo/IC05-workSets/CN01/CN01.txt", "2001-01-01", "2001-12-31" );
 		election CN04 = new election( "CN04", "/tempo/IC05-workSets/CN04/CN04.txt", "2004-01-01", "2004-12-31" );
@@ -207,10 +288,17 @@ public class election {
 //		daList.add( RG04 );
 //		daList.add( RG10 );
 		
+		List< bureau > daListeDpt = new ArrayList< bureau >();
+		
 		daList.forEach( (election) -> {
-			election.liste_bureau.forEach((id, bureau) -> bureau.calculReportV1() );
-			election.exportToCSV( "/tempo/IC05-workSets/CN04.csv" );
+			daListeDpt.addAll( election.getBureauxDpt( "60" ));
+//			election.liste_bureau.forEach((id, bureau) -> bureau.calculReportV1() );
+//			election.exportToCSV( "/tempo/IC05-workSets/CN04.csv" );
+			election.exportToCSV( "/tempo/IC05-workSets/CN04_60.csv", daListeDpt );
 		});
+		
+		
+		
 	}
 }
 

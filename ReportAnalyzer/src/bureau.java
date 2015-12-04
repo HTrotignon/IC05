@@ -243,5 +243,9 @@ public class bureau {
 	public int getNb_inscrits() {
 		return nb_inscrits;
 	}
+	
+	public String getCode_dpt() {
+		return code_dpt;
+	}
 }
  
