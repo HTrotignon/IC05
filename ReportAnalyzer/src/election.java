@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -6,6 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import org.jdom2.*;
+import org.jdom2.output.*;
 
 public class election {
 	
@@ -109,21 +113,21 @@ public class election {
 		return nom;
 	}
 	
-	private void sommeReports() {
+	public void sommeReports() {
 		this.liste_bureau.forEach( ( id, bureau ) -> {
-			bureau.getListe_reports().forEach( ( report ) ->{
-				String idReport = report.getNuance_origine() + report.getNuance_cible();
-				if( this.liste_reports.containsKey( idReport )){
-					this.liste_reports.get( idReport ).setNb_voix_reportées( liste_reports.get( idReport ).getNb_voix_reportées() + report.getNb_voix_reportées());
+			bureau.calculReportV1();
+			bureau.getListe_reports().forEach( ( report ) -> {
+				if( this.liste_reports.containsKey( report.getId() )){
+					this.liste_reports.get( report.getId() ).setNb_voix_reportées( liste_reports.get( report.getId() ).getNb_voix_reportées() + report.getNb_voix_reportées());
 				}
 				else {
-					this.liste_reports.put( idReport, report );
+					this.liste_reports.put( report.getId(), report );
 				}
 			});;
 		});
 	}
 
-	private List< bureau > getBureauxDpt( String numDpt ) {
+	public List< bureau > getBureauxDpt( String numDpt ) {
 		System.out.println( "getBureauDpt :: BEGIN" );
 		List< bureau > listeDpt = new ArrayList< bureau >();
 		
@@ -140,7 +144,7 @@ public class election {
 		return listeDpt;
 	}
 	
-	private void exportToCSV( String fichierCible ) {
+	public void exportToCSV( String fichierCible ) {
 		System.out.println( "Début export" );
 		
 //		String fileRatio = "/tempo/IC05-workSets/" + fichierCible + "/ratio_" + fichierCible + ".csv";
@@ -208,60 +212,151 @@ public class election {
 		}
 	}
 	
-	private void exportToGEXF( String fichierCible ) {
-		System.out.println( "Début export to GEXF" );
-		try {
-			FileWriter writerRatio = new FileWriter( fichierCible, true );
-			
-			//ajout des en-tetes
-			writerRatio.append( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" );
-			writerRatio.append( "<gexf xmlns=\"http://www.gexf.net/1.2draft\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd\" version=\"1.2\">\n" );
-			writerRatio.append( "\t<meta lastmodifieddate=\"2015-12-04\">\n" );
-			writerRatio.append( "\t\t<creator>IC05 - TROTIGNON Hugo, DELESALLE Amaury, BARRIOS Piers</creator>\n" );
-			writerRatio.append( "\t\t<description>Un graphe pour analyser les reports de voix depuis 1999</description>\n" );
-			writerRatio.append( "\t</meta>\n" );
-			writerRatio.append( "\t<graph mode=\"dynamic\" defaultedgetype=\"directed\" timeformat=\"date\">\n" );
-			writerRatio.append( "\t\t<nodes>\n" );
-			writerRatio.append( "\t\t\t<node id=\"Extreme Droite\" label=\"MNR, EXD, LEXD, BC-EXD\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Front National\" label=\"FN, LFN, BC-FN\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Divers Droite\" label=\"RPF, DVD, DL, MPF, LDVD, PRV, BC-UD, BC-DLF, BC-DVD\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Union de la droite\" label=\"RPR, UMP, MAJ, LDD, LMAJ, M-NC, M, LUMP, BC-UMP\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Centre\" label=\"UDF, MDC, PRG, PREP, RDG, LDR, UDFD, LCMD, LMC, MGC, MODM, CEN, ALLI, NCE, LMDM, LUC, LUDI, BC-MDM, BC-UC, BC-UDI\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Divers\" label=\"DIV, CPNT, LDV, LCP, AUT, LAUT, LDIV, BC-DIV\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Régionalistes\" label=\"REG, LREG\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Ecologistes\" label=\"ECO, VEC, LEC, LVE, LVEC, BC-VEC\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Parti Socialiste\" label=\"SOC, LGA, LSOC, BC-SOC\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Divers Gauche\" label=\"DVG, LDG, LUG, LDVG, BC-UG, BC-RDG, BC-DVG\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Front de gauche\" label=\"COM, LCOM, LCOP, PG, FG, LFG, LPG, BC-FG, BC-PG, BC-COM\"/> \n");
-			writerRatio.append( "\t\t\t<node id=\"Extreme Gauche\" label=\"EXG, LEXG, LCR, LO, LXG, BC-EXG\"/> \n");
-			writerRatio.append( "\t\t</nodes>\n" );
-			writerRatio.append( "\t\t<attributes class=\"edge\" mode=\"dynamic\">\n" );
-			writerRatio.append( "\t\t\t<attribute id=\"weight\" title=\"weight\" type=\"double\"/>\n" );
-			writerRatio.append( "\t\t</attributes>\n" );
-			writerRatio.append( "\t\t<edges>\n" );
-			
-			//ajout des infos
-			this.liste_bureau.forEach( ( id, bureau ) -> {
-				bureau.getListe_reports().forEach( ( report ) -> {
-					try {
-						writerRatio.append( "\t\t\t<edge  source=\"" + report.getNuance_origine() + "\" target=\"" + report.getNuance_cible() + "\" weight=\"" + Double.toString( report.getNb_voix_reportées()) + "\" start=\"" + this.getDateDebut() + "\" fin=\"" + this.getDateFin() + "\"/>\n");
-					} catch(IOException e) {
-					     e.printStackTrace();
-					}
-				});
+	private static Element createNode( String id, String label ){
+		Element myElement = new Element( "node" );
+		myElement.setAttribute( "id",  id );
+		myElement.setAttribute( "label",  label );
+		
+		return myElement;
+	}
+	
+	public static void createGEXF( List< election > listeElection , String fichierCible ){
+		Map< String, Element > liensAjoutés = new HashMap< String, Element >();
+		Map< String, Element > spellsAjoutés = new HashMap< String, Element >();
+		
+		Element racine = exportHeaderGEXF();
+		Element graph = racine.getChild( "graph" );
+		Element edges = new Element( "edges" );
+		graph.addContent( edges );
+		
+		listeElection.forEach( (election) -> {
+			election.sommeReports();
+			election.liste_reports.forEach( ( id, report ) -> {
+				election.addEdge( edges, report, liensAjoutés, spellsAjoutés);
 			});
+		});
+		
+		saveGEXF( fichierCible, racine );
+	}
+	
+	public static void saveGEXF( String fichierCible, Element racine ) {
+		try
+		   {
+		      XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
+		      org.jdom2.Document document = new Document(racine);
+		      
+		      sortie.output( document, new FileOutputStream( fichierCible ));
+		   }
+		   catch (java.io.IOException e){}
+	}
+	
+	public static Element exportHeaderGEXF() {
+		Namespace ns = Namespace.getNamespace("http://www.gexf.net/1.2draft");
+		Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+
+		// la racine
+		Element racine = new Element( "gexf", ns );
+		racine.addNamespaceDeclaration(xsi);
+		racine.setAttribute( "schemaLocation","http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd", xsi );
+		racine.setAttribute( "version","1.2" );
+
+		// meta
+		Element meta = new Element("meta");
+		racine.addContent( meta );
+		meta.setAttribute( "lastmodifieddate" , "2015-12-04" );
+
+		Element creator = new Element("creator");
+		meta.addContent( creator );
+		creator.setText( "IC05 - TROTIGNON Hugo, DELESALLE Amaury, BARRIOS Piers" );		
+		Element description = new Element("description");
+		meta.addContent( description );
+		description.setText( "Un graphe pour analyser les reports de voix depuis 1999" );
+
+		// graph
+		Element graph = new Element("graph");
+		racine.addContent( graph );
+		graph.setAttribute( "mode" , "dynamic" );
+		graph.setAttribute( "defaultedgetype" , "directed" );
+		graph.setAttribute( "timeformat" , "date" );
+
+		// nodes
+		Element nodes = new Element("nodes");
+		graph.addContent( nodes );
+		nodes.addContent( createNode( "Extreme Droite", "MNR, EXD, LEXD, BC-EXD" ));
+		nodes.addContent( createNode( "Front National", "FN, LFN, BC-FN" ));
+		nodes.addContent( createNode( "Divers Droite", "RPF, DVD, DL, MPF, LDVD, PRV, BC-UD, BC-DLF, BC-DVD" ));
+		nodes.addContent( createNode( "Union de la Droite", "RPR, UMP, MAJ, LDD, LMAJ, M-NC, M, LUMP, BC-UMP" ));
+		nodes.addContent( createNode( "Centre", "UDF, MDC, PRG, PREP, RDG, LDR, UDFD, LCMD, LMC, MGC, MODM, CEN, ALLI, NCE, LMDM, LUC, LUDI, BC-MDM, BC-UC, BC-UDI" ));
+		nodes.addContent( createNode( "Divers", "DIV, CPNT, LDV, LCP, AUT, LAUT, LDIV, BC-DIV" ));
+		nodes.addContent( createNode( "Regionalistes", "REG, LREG" ));
+		nodes.addContent( createNode( "Ecologistes", "ECO, VEC, LEC, LVE, LVEC, BC-VEC" ));
+		nodes.addContent( createNode( "Parti Socialiste", "SOC, LGA, LSOC, BC-SOC" ));
+		nodes.addContent( createNode( "Divers Gauche", "DVG, LDG, LUG, LDVG, BC-UG, BC-RDG, BC-DVG" ));
+		nodes.addContent( createNode( "Front de Gauche", "COM, LCOM, LCOP, PG, FG, LFG, LPG, BC-FG, BC-PG, BC-COM" ));
+		nodes.addContent( createNode( "Extreme Gauche", "EXG, LEXG, LCR, LO, LXG, BC-EXG" ));
+		nodes.addContent( createNode( "Blancs et Nuls", "Blancs et Nuls" ));
+		nodes.addContent( createNode( "Abstention", "Abstention" ));
+		
+		//Attributes
+		Element attributes = new Element( "attributes" );
+		graph.addContent( attributes );
+		attributes.setAttribute( "class", "edge" );
+		attributes.setAttribute( "mode", "dynamic" );
+
+		Element attribute = new Element( "attribute" );
+		attributes.addContent( attribute );
+		attribute.setAttribute( "id", "weight" );
+		attribute.setAttribute( "title", "Weight" );
+		attribute.setAttribute( "type", "float" );
+
+		//		org.jdom2.Document document = new Document(racine);
+		//		   try
+		//		   {
+		//		      //On utilise ici un affichage classique avec getPrettyFormat()
+		//		      XMLOutputter sortie = new XMLOutputter(Format.getPrettyFormat());
+		//		      sortie.output(document, System.out);
+		//		   }
+		//		   catch (java.io.IOException e){}
+		return racine;
+	}
+
+	public void addEdge( Element edges, report myReport, Map< String, Element > liensAjoutés, Map< String, Element > spellsAjoutés ){
+		if( 0 != myReport.getNb_voix_reportées() ) {
+			Element attvalues;
+			Element spells;
 			
-			//ajout de la fermeture d'en-tetes
-			writerRatio.append( "\t\t</edges>\n" );
-			writerRatio.append( "\t</graph>\n" );
-			writerRatio.append( "</gexf>\n" );
+			if( liensAjoutés.containsKey( myReport.getId()) ) {
+				attvalues = liensAjoutés.get( myReport.getId() );
+				spells = spellsAjoutés.get( myReport.getId() );
+			}
+			else {
+				Element edge = new Element( "edge" );
+				edges.addContent( edge );
+				edge.setAttribute( "source", myReport.getNuance_origine() );
+				edge.setAttribute( "target", myReport.getNuance_cible() );
+	//			edge.setAttribute( "start", "2000-01-01" );
+	//			edge.setAttribute( "end", "2016-12-31" );
+	
+				attvalues = new Element( "attvalues" );
+				edge.addContent( attvalues );
+				liensAjoutés.put( myReport.getId(), attvalues );
+				
+				spells = new Element( "spells" );
+				edge.addContent( spells );
+				spellsAjoutés.put( myReport.getId(), spells );
+			}
 			
-			writerRatio.flush();
-			writerRatio.close();
+			Element attvalue = new Element( "attvalue" );
+			attvalues.addContent( attvalue );
+			attvalue.setAttribute( "for", "weight" );
+			attvalue.setAttribute( "value", Integer.toString( myReport.getNb_voix_reportées()) );
+			attvalue.setAttribute( "start", this.getDateDebut() );
+			attvalue.setAttribute( "end", this.getDateFin() );
 			
-		System.out.println( "Fin export" );
-		} catch(IOException e) {
-			e.printStackTrace();
+			Element spell = new Element( "spell" );
+			spells.addContent( spell );
+			spell.setAttribute( "start", this.getDateDebut() );
+			spell.setAttribute( "end", this.getDateFin() );
 		}
 	}
 

@@ -38,8 +38,8 @@ public class bureau {
 	private List< report > liste_reports = new ArrayList< report >();
 
 	public void addAbstention( int numTour) {
-		candidat abstention = new candidat( "666666", "abstention" );
-		candidat blancsNuls = new candidat( "7777777", "blancs et nuls" );
+		candidat abstention = new candidat( "666666", "Abstention" );
+		candidat blancsNuls = new candidat( "7777777", "Blancs et Nuls" );
 		
 		if( 1 == numTour ) {
 			this.addCandidat( abstention, numTour, this.getNb_inscrits()-this.getNb_votants_T1() ); 
@@ -59,7 +59,7 @@ public class bureau {
 		case "EXD" :
 		case "LEXD" :
 		case "BC-EXD" :
-			newCandidat.setNuance( "Extrême Droite" );
+			newCandidat.setNuance( "Extreme Droite" );
 			break;
 		case "FN" :
 		case "LFN" :
@@ -165,7 +165,7 @@ public class bureau {
 		case "LO" :	
 		case "LXG" :	
 		case "BC-EXG" :
-			newCandidat.setNuance( "Extrême Gauche" );
+			newCandidat.setNuance( "Extreme Gauche" );
 			break;
 	}
 		

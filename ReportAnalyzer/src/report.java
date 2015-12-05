@@ -5,8 +5,13 @@ public class report {
 		this.nuance_origine = nuanceCandidat1;
 		this.nuance_cible = NuanceCandidat2;
 		this.setRatio_report( alpha );
+		this.id = this.getNuance_origine() + this.getNuance_cible();
 	}
 
+	public String getId() {
+		return id;
+	}
+	
 	public Double getRatio_report() {
 		return ratio_report;
 	}
@@ -30,6 +35,7 @@ public class report {
 		this.nb_voix_reportées = nb_voix_reportées;
 	}
 	
+	private String id;
 	private String nuance_origine;
 	private String nuance_cible;
 	private Double ratio_report;
