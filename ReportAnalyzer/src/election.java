@@ -32,8 +32,8 @@ public class election {
 				    
 				    // séparateur "\\s" : CN01, CN04, CN08, CN11, DP15, LG02, LG07, LG12, RG04, RG10
 				    // séparateur ";"	: MN08, 
-				    // séparateur "tab"	: MN14, 
-				    String[] parts = line.split( "\\s" );
+				    // séparateur "\\t"	: MN14, 
+				    String[] parts = line.split( "\\s" );				    
 				    
 				    checkAndAddBureau( parts );
 				    
@@ -278,6 +278,8 @@ public class election {
 		graph.setAttribute( "mode" , "dynamic" );
 		graph.setAttribute( "defaultedgetype" , "directed" );
 		graph.setAttribute( "timeformat" , "date" );
+		graph.setAttribute( "start", "2000-01-01" );
+		graph.setAttribute( "end", "2016-12-31" );
 
 		// nodes
 		Element nodes = new Element("nodes");
