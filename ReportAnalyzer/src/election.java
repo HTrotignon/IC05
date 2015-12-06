@@ -15,10 +15,14 @@ public class election {
 	
 	public election( String nomElection, String nomFichier, String dateD, String dateF ) {
 		this.nom = nomElection;
+		this.nomFichier = nomFichier;
 		this.date_début = dateD;
 		this.date_fin = dateF;
+	}
+
+	private void creerElection(){
 		try {
-			Scanner scanner = new Scanner( new File( nomFichier ));
+			Scanner scanner = new Scanner( new File( this.nomFichier ));
 			try {
 				// Lecture du fichier ligne par ligne. Cette boucle se termine quand la méthode retourne la valeur null.
 				while( scanner.hasNextLine() ) {
@@ -33,10 +37,29 @@ public class election {
 				    // séparateur "\\s" : CN01, CN04, CN08, CN11, DP15, LG02, LG07, LG12, RG04, RG10
 				    // séparateur ";"	: MN08, 
 				    // séparateur "\\t"	: MN14, 
-				    String[] parts = line.split( "\\s" );				    
-				    
+				    String[] parts = {"",""};
+				    switch( this.nom ) {
+				    	case "CN01" :
+				    	case "CN04" :
+				    	case "CN08" :
+				    	case "CN11" :
+				    	case "CP15" :
+				    	case "LG02" :
+				    	case "LG07" :
+				    	case "LG12" :
+				    	case "RG04" :
+				    	case "RG10" :
+				    		parts = line.split( "\\s" );
+				    		break;
+				    	case "MN08" :
+				    		parts = line.split( ";" );
+				    		break;
+				    	case "MN14" :
+				    		parts = line.split( "\\t" );
+				    		break;
+				    }
+				    				    
 				    checkAndAddBureau( parts );
-				    
 				    
 				    if( -1 == this.liste_nuances.indexOf( parts[9] ) )
 				    	{ this.liste_nuances.add( parts[9] ); }
@@ -49,8 +72,8 @@ public class election {
 		// erreur de fermeture des flux
 			System.out.println( "Erreur --" + ioe.toString() );
 		}
-	}
-
+	};
+	
 	private void checkAndAddBureau( String[] sBureau ) {
 		candidat newCandidat = new candidat( sBureau[8], sBureau[9] );
 		
@@ -94,6 +117,7 @@ public class election {
 	Map< String, report > liste_reports = new HashMap< String, report >();
 	private List< String > liste_nuances = new ArrayList< String >();
 	private String nom;
+	private String nomFichier;
 	private String date_début;
 	private String date_fin;
 	
@@ -114,6 +138,7 @@ public class election {
 	}
 	
 	public void sommeReports() {
+		this.creerElection();
 		this.liste_bureau.forEach( ( id, bureau ) -> {
 			bureau.calculReportV1();
 			bureau.getListe_reports().forEach( ( report ) -> {
@@ -127,21 +152,22 @@ public class election {
 		});
 	}
 
-	public List< bureau > getBureauxDpt( String numDpt ) {
+	public void getBureauxDpt( String numDpt ) {
 		System.out.println( "getBureauDpt :: BEGIN" );
-		List< bureau > listeDpt = new ArrayList< bureau >();
+		Map< String, bureau > listeDpt = new HashMap< String, bureau >();
 		
 		this.liste_bureau.forEach( ( id, bureau ) -> {
 			if( numDpt.equals( bureau.getCode_dpt() )) {
 //				System.out.println( bureau.getCode_dpt() );
-				listeDpt.add( bureau );
+				listeDpt.put( id, bureau );
 			}
 		});
 		
-		listeDpt.forEach( (bureau) -> bureau.calculReportV1());
+		this.liste_bureau = listeDpt;
+		//listeDpt.forEach( (bureau) -> bureau.calculReportV1());
+		
 		
 		System.out.println( "getBureauDpt :: END" );
-		return listeDpt;
 	}
 	
 	public void exportToCSV( String fichierCible ) {
@@ -212,31 +238,47 @@ public class election {
 		}
 	}
 	
-	private static Element createNode( String id, String label ){
+	private static Element createNode( String id, String label, String r, String g, String b ){
+//		Namespace viz = Namespace.getNamespace("viz", "http://www.gexf.net/1.1draft/viz");
+		
 		Element myElement = new Element( "node" );
 		myElement.setAttribute( "id",  id );
 		myElement.setAttribute( "label",  label );
 		
+		Element color = new Element( "color" );
+		myElement.addContent( color );
+		color.setAttribute( "r", r );
+		color.setAttribute( "g", g );
+		color.setAttribute( "b", b );
+		
 		return myElement;
 	}
 	
-	public static void createGEXF( List< election > listeElection , String fichierCible ){
-		Map< String, Element > liensAjoutés = new HashMap< String, Element >();
-		Map< String, Element > spellsAjoutés = new HashMap< String, Element >();
-		
-		Element racine = exportHeaderGEXF();
-		Element graph = racine.getChild( "graph" );
-		Element edges = new Element( "edges" );
-		graph.addContent( edges );
-		
-		listeElection.forEach( (election) -> {
-			election.sommeReports();
-			election.liste_reports.forEach( ( id, report ) -> {
-				election.addEdge( edges, report, liensAjoutés, spellsAjoutés);
+	public static void createGEXF( List< election > listeElection , String fichierCible, String numDpt ){
+			Map< String, Element > liensAjoutés = new HashMap< String, Element >();
+			Map< String, Element > spellsAjoutés = new HashMap< String, Element >();
+			
+			Element racine = exportHeaderGEXF();
+			Element graph = racine.getChild( "graph" );
+			Element edges = new Element( "edges" );
+			graph.addContent( edges );
+			
+			listeElection.forEach( (election) -> {
+				if ( !numDpt.equals( "" )){
+					election.getBureauxDpt( numDpt );
+				}
+				election.sommeReports();
+				election.liste_reports.forEach( ( id, report ) -> {
+					election.addEdge( edges, report, liensAjoutés, spellsAjoutés);
+				});
 			});
-		});
+			
+			saveGEXF( fichierCible, racine );
 		
-		saveGEXF( fichierCible, racine );
+	}
+	
+	public static void createGEXF( List< election > listeElection , String fichierCible ){
+		
 	}
 	
 	public static void saveGEXF( String fichierCible, Element racine ) {
@@ -253,13 +295,15 @@ public class election {
 	public static Element exportHeaderGEXF() {
 		Namespace ns = Namespace.getNamespace("http://www.gexf.net/1.2draft");
 		Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-
+		Namespace viz = Namespace.getNamespace("viz", "http://www.gexf.net/1.1draft/viz");
+		
 		// la racine
 		Element racine = new Element( "gexf", ns );
-		racine.addNamespaceDeclaration(xsi);
+		racine.addNamespaceDeclaration( xsi );
+		racine.addNamespaceDeclaration( viz );
 		racine.setAttribute( "schemaLocation","http://www.gexf.net/1.2draft http://www.gexf.net/1.2draft/gexf.xsd", xsi );
 		racine.setAttribute( "version","1.2" );
-
+		
 		// meta
 		Element meta = new Element("meta");
 		racine.addContent( meta );
@@ -284,20 +328,20 @@ public class election {
 		// nodes
 		Element nodes = new Element("nodes");
 		graph.addContent( nodes );
-		nodes.addContent( createNode( "Extreme Droite", "MNR, EXD, LEXD, BC-EXD" ));
-		nodes.addContent( createNode( "Front National", "FN, LFN, BC-FN" ));
-		nodes.addContent( createNode( "Divers Droite", "RPF, DVD, DL, MPF, LDVD, PRV, BC-UD, BC-DLF, BC-DVD" ));
-		nodes.addContent( createNode( "Union de la Droite", "RPR, UMP, MAJ, LDD, LMAJ, M-NC, M, LUMP, BC-UMP" ));
-		nodes.addContent( createNode( "Centre", "UDF, MDC, PRG, PREP, RDG, LDR, UDFD, LCMD, LMC, MGC, MODM, CEN, ALLI, NCE, LMDM, LUC, LUDI, BC-MDM, BC-UC, BC-UDI" ));
-		nodes.addContent( createNode( "Divers", "DIV, CPNT, LDV, LCP, AUT, LAUT, LDIV, BC-DIV" ));
-		nodes.addContent( createNode( "Regionalistes", "REG, LREG" ));
-		nodes.addContent( createNode( "Ecologistes", "ECO, VEC, LEC, LVE, LVEC, BC-VEC" ));
-		nodes.addContent( createNode( "Parti Socialiste", "SOC, LGA, LSOC, BC-SOC" ));
-		nodes.addContent( createNode( "Divers Gauche", "DVG, LDG, LUG, LDVG, BC-UG, BC-RDG, BC-DVG" ));
-		nodes.addContent( createNode( "Front de Gauche", "COM, LCOM, LCOP, PG, FG, LFG, LPG, BC-FG, BC-PG, BC-COM" ));
-		nodes.addContent( createNode( "Extreme Gauche", "EXG, LEXG, LCR, LO, LXG, BC-EXG" ));
-		nodes.addContent( createNode( "Blancs et Nuls", "Blancs et Nuls" ));
-		nodes.addContent( createNode( "Abstention", "Abstention" ));
+		nodes.addContent( createNode( "Extreme Droite", "A", "0", "0", "179" )); //MNR, EXD, LEXD, BC-EXD
+		nodes.addContent( createNode( "Front National", "B", "0", "0", "255" )); //FN, LFN, BC-FN
+		nodes.addContent( createNode( "Divers Droite", "C", "117", "119", "255" )); //RPF, DVD, DL, MPF, LDVD, PRV, BC-UD, BC-DLF, BC-DVD
+		nodes.addContent( createNode( "Union de la Droite", "D", "102", "230", "255" )); //RPR, UMP, MAJ, LDD, LMAJ, M-NC, M, LUMP, BC-UMP
+		nodes.addContent( createNode( "Centre", "E", "255", "179", "17" )); //UDF, MDC, PRG, PREP, RDG, LDR, UDFD, LCMD, LMC, MGC, MODM, CEN, ALLI, NCE, LMDM, LUC, LUDI, BC-MDM, BC-UC, BC-UDI
+		nodes.addContent( createNode( "Divers", "F", "199", "195", "199" )); //DIV, CPNT, LDV, LCP, AUT, LAUT, LDIV, BC-DIV
+		nodes.addContent( createNode( "Regionalistes", "G", "179", "107", "59" )); //REG, LREG
+		nodes.addContent( createNode( "Ecologistes", "H", "68", "207", "39" )); //ECO, VEC, LEC, LVE, LVEC, BC-VEC
+		nodes.addContent( createNode( "Parti Socialiste", "I", "255", "89", "158" )); //SOC, LGA, LSOC, BC-SOC
+		nodes.addContent( createNode( "Divers Gauche", "J", "255", "155", "208" )); //DVG, LDG, LUG, LDVG, BC-UG, BC-RDG, BC-DVG
+		nodes.addContent( createNode( "Front de Gauche", "K", "255", "128", "128" )); //COM, LCOM, LCOP, PG, FG, LFG, LPG, BC-FG, BC-PG, BC-COM
+		nodes.addContent( createNode( "Extreme Gauche", "L", "255", "0", "0" )); //EXG, LEXG, LCR, LO, LXG, BC-EXG
+		nodes.addContent( createNode( "Blancs et Nuls", "M", "217", "217", "217" )); //Blancs et Nuls
+		nodes.addContent( createNode( "Abstention", "N", "59", "59", "59" )); //Abstention
 		
 		//Attributes
 		Element attributes = new Element( "attributes" );

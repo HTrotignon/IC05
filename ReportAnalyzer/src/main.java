@@ -17,14 +17,20 @@ public class main {
 //		election LG02 = new election( "LG02", "/tempo/IC05-workSets/LG02/LG02.txt", "2002-01-01", "2003-01-01" );
 //		election LG07 = new election( "LG07", "/tempo/IC05-workSets/LG07/LG07.txt", "2007-01-01", "2008-01-01" );
 //		election LG12 = new election( "LG12", "/tempo/IC05-workSets/LG12/LG12.txt", "2012-01-01", "2013-01-01" );
-		election MN08 = new election( "MN08", "/tempo/IC05-workSets/MN08/MN08.txt", "2008-07-01", "2009-01-01" );
-		election MN14 = new election( "MN14", "/tempo/IC05-workSets/MN14/MN14.txt", "2014-01-01", "2015-01-01" );
-//		election RG04 = new election( "RG04", "/tempo/IC05-workSets/RG04/RG04.txt", "2004-07-01", "2005-01-01" );
-//		election RG10 = new election( "RG10", "/tempo/IC05-workSets/RG10/RG10.txt", "2010-01-01", "2011-01-01" );
+//		election MN08 = new election( "MN08", "/tempo/IC05-workSets/MN08/MN08.txt", "2008-07-01", "2009-01-01" );
+//		election MN14 = new election( "MN14", "/tempo/IC05-workSets/MN14/MN14.txt", "2014-01-01", "2015-01-01" );
+		election RG04 = new election( "RG04", "/tempo/IC05-workSets/RG04/RG04.txt", "2004-07-01", "2005-01-01" );
+		election RG10 = new election( "RG10", "/tempo/IC05-workSets/RG10/RG10.txt", "2010-01-01", "2011-01-01" );
 		
 
 		List< election > daList = new ArrayList< election >();
-
+//		election LG02 = new election( "LG02", "/tempo/IC05-workSets/LG02/LG02.txt", "2002-01-01", "2003-01-01" );
+//		daList.add( LG02 );
+//		election LG07 = new election( "LG07", "/tempo/IC05-workSets/LG07/LG07.txt", "2007-01-01", "2008-01-01" );
+//		daList.add( LG07 );
+//		election LG12 = new election( "LG12", "/tempo/IC05-workSets/LG12/LG12.txt", "2012-01-01", "2013-01-01" );
+//		daList.add( LG12 );
+		
 //		daList.add( CN01 );
 //		daList.add( CN04 );
 //		daList.add( CN08 );
@@ -33,20 +39,20 @@ public class main {
 //		daList.add( LG02 );
 //		daList.add( LG07 );
 //		daList.add( LG12 );
-		daList.add( MN08 );
-		daList.add( MN14 );
-//		daList.add( RG04 );
-//		daList.add( RG10 );
+//		daList.add( MN08 );
+//		daList.add( MN14 );
+		daList.add( RG04 );
+		daList.add( RG10 );
 
 		//		List< bureau > daListeDpt = new ArrayList< bureau >();
 
 		
-		election.createGEXF( daList, "/tempo/IC05-workSets/Municipales.gexf" );
+		election.createGEXF( daList, "/tempo/IC05-workSets/Regionales60.gexf", "60" );
 		
 		//election.exportToCSV( "C:\\Piers\\UV UTC\\IC05\\CSV\\CN01.csv" );
 		//election.exportToGEXF("C:\\Piers\\UV UTC\\IC05\\GEXF\\CN01.gexf");
 
-		//			daListeDpt.addAll( election.getBureauxDpt( "60" ));
+//		daListeDpt.addAll( election.getBureauxDpt( "60" ));
 		//			election.liste_bureau.forEach((id, bureau) -> bureau.calculReportV1() );
 		//			election.exportToGEXF( "/tempo/IC05-workSets/CN04.gexf" );
 		//			election.exportToCSV( "/tempo/IC05-workSets/CN04_60.csv", daListeDpt );

@@ -58,6 +58,7 @@ public class bureau {
 		case "MNR" :
 		case "EXD" :
 		case "LEXD" :
+		case "LXD" :
 		case "BC-EXD" :
 			newCandidat.setNuance( "Extreme Droite" );
 			break;
@@ -86,6 +87,7 @@ public class bureau {
 		case "M" :
 		case "LUMP" :
 		case "BC-UMP" :
+		case "LUD" :
 			newCandidat.setNuance( "Union de la Droite" );
 			break;
 		case "UDF" :
@@ -122,6 +124,7 @@ public class bureau {
 			break;
 		case "REG" :
 		case "LREG" :
+		case "LRG" :
 			newCandidat.setNuance( "Regionalistes" );
 			break;
 		case "ECO" :
