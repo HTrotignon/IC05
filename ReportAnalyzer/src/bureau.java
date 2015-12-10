@@ -1,7 +1,10 @@
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 
 public class bureau {
@@ -23,6 +26,10 @@ public class bureau {
 	private int code_commune;
 	private String num_bureau;
 	
+	public String getNum_bureau() {
+		return num_bureau;
+	}
+
 	private int nb_inscrits;
 
 	private int nb_votants_T1 = 0;
@@ -35,6 +42,10 @@ public class bureau {
 	private double somme_reports = 0;
 	private Map< candidat, Integer > liste_candidats_T1 = new HashMap< candidat, Integer >();
 	private Map< candidat, Integer > liste_candidats_T2 = new HashMap< candidat, Integer >();
+	public Map<candidat, Integer> getListe_candidats_T2() {
+		return liste_candidats_T2;
+	}
+
 	private List< report > liste_reports = new ArrayList< report >();
 
 	public void addAbstention( int numTour) {
@@ -211,6 +222,44 @@ public class bureau {
 		//System.out.println( "END" );
 	}
 	
+	public Map< String, report > lectureEstimationReports( String fichierRatiosReports ){
+		Map< String, report > modeleReport = new HashMap< String, report >();
+		try {
+			Scanner scanner = new Scanner( new File( fichierRatiosReports ));
+			try {
+				// Lecture du fichier ligne par ligne. Cette boucle se termine quand la méthode retourne la valeur null.
+				while( scanner.hasNextLine() ) {
+				    String line = scanner.nextLine();
+				    String[] parts = line.split( "," );
+				    
+				    report newReport = new report( parts[0], parts[1], Double.parseDouble( parts[3] ));
+				    modeleReport.put( newReport.getId(), newReport );
+				}
+			} finally {
+			// dans tous les cas, on ferme nos flux
+				scanner.close();
+			}
+		} catch( IOException ioe ) {
+		// erreur de fermeture des flux
+			System.out.println( "Erreur --" + ioe.toString() );
+		}
+		return modeleReport;
+	}
+	
+	public void calculEstimationReports( Map< String, report > modeleReports ){
+		this.liste_candidats_T1.forEach( ( candidat1, nb_voix1 ) -> {
+			if( false == liste_candidats_T2.containsKey( candidat1 )) {
+				this.liste_candidats_T2.forEach(( candidat2, nb_voix2 ) -> {
+					nb_voix2 += (int)(this.getNb_inscrits()* modeleReports.get( candidat1.getNuance() + candidat2.getNuance()).getRatio_report() );
+					//System.out.println( Integer.toString( nb_voix1 ));
+				});
+			}
+			else { // résultat au 1er tour du candidat qualifié au tour 2
+				this.liste_candidats_T2.replace( candidat1, this.liste_candidats_T2.get( candidat1 ) + nb_voix1 );
+			}
+		});
+	}
+
 	public int getNb_votants_T1() {
 		return nb_votants_T1;
 	}

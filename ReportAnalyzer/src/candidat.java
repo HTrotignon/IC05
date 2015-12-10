@@ -8,7 +8,7 @@ public class candidat {
 	
 	private int id;
 	private String nuance;
-	
+	private int score;
 	
 	public int getId() {
 		return id;
@@ -21,6 +21,12 @@ public class candidat {
 	}
 	public void setNuance(String nuance) {
 		this.nuance = nuance;
+	}
+	public int getScore() {
+		return score;
+	}
+	public void setScore(int score) {
+		this.score = score;
 	}
 	
 	

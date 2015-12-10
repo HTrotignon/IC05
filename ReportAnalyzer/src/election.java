@@ -73,6 +73,18 @@ public class election {
 			System.out.println( "Erreur --" + ioe.toString() );
 		}
 	};
+
+	public void addCandidatsSecondTour( Map< candidat, List< String >> Candidats ) {
+		Candidats.forEach( (candidat, listeCommunes ) -> {
+			listeCommunes.forEach( (commune) -> {
+				this.liste_bureau.forEach( (id, bureau) -> {
+					if( bureau.getCode_dpt().equals( commune )){
+						bureau.addCandidat( candidat, 2, 0);
+					}
+				});
+			});
+		});
+	}
 	
 	private void checkAndAddBureau( String[] sBureau ) {
 		candidat newCandidat = new candidat( sBureau[8], sBureau[9] );
@@ -115,6 +127,7 @@ public class election {
 
 	Map< String, bureau > liste_bureau = new HashMap< String, bureau >();
 	Map< String, report > liste_reports = new HashMap< String, report >();
+	Map< String, candidat > estimations_candidats = new HashMap< String, candidat >();
 	private List< String > liste_nuances = new ArrayList< String >();
 	private String nom;
 	private String nomFichier;
@@ -137,47 +150,92 @@ public class election {
 		return nom;
 	}
 	
+	public void sommeResultats( String fichierReports ){
+		this.liste_bureau.forEach( ( id, bureau ) -> {
+			bureau.calculEstimationReports( bureau.lectureEstimationReports( fichierReports ));
+			bureau.getListe_candidats_T2().forEach( ( candidat, nb_voix ) -> {
+				if( this.estimations_candidats.containsKey( candidat.getId() )){
+					this.estimations_candidats.get( candidat.getId() ).setScore( estimations_candidats.get( candidat.getId()).getScore() + nb_voix ); 
+				}
+				else {
+					this.estimations_candidats.put( Integer.toString( candidat.getId() ), candidat );
+				}
+			});
+		});
+	}
+	
 	public void sommeReports() {
-		this.creerElection();
 		this.liste_bureau.forEach( ( id, bureau ) -> {
 			bureau.calculReportV1();
 			bureau.getListe_reports().forEach( ( report ) -> {
 				if( this.liste_reports.containsKey( report.getId() )){
 					this.liste_reports.get( report.getId() ).setNb_voix_reportées( liste_reports.get( report.getId() ).getNb_voix_reportées() + report.getNb_voix_reportées());
+					this.liste_reports.get( report.getId() ).setRatio_report( ( liste_reports.get( report.getId() ).getRatio_report() + report.getRatio_report())/2 );
 				}
 				else {
 					this.liste_reports.put( report.getId(), report );
 				}
 			});;
 		});
-	}
+	}	
 
-	public void getBureauxDpt( String numDpt ) {
+	public void getBureauxDpt( List< String > numDpt ) {
 		System.out.println( "getBureauDpt :: BEGIN" );
 		Map< String, bureau > listeDpt = new HashMap< String, bureau >();
-		
+
 		this.liste_bureau.forEach( ( id, bureau ) -> {
-			if( numDpt.equals( bureau.getCode_dpt() )) {
-//				System.out.println( bureau.getCode_dpt() );
-				listeDpt.put( id, bureau );
-			}
+			numDpt.forEach( (num) -> {
+				//				System.out.println( num );
+				if( num.equals( bureau.getCode_dpt() )) {
+//					System.out.println( bureau.getCode_dpt() );
+					listeDpt.put( id, bureau );
+				}
+			});
 		});
-		
+
 		this.liste_bureau = listeDpt;
 		//listeDpt.forEach( (bureau) -> bureau.calculReportV1());
-		
-		
+
+
 		System.out.println( "getBureauDpt :: END" );
 	}
-	
-	public void exportToCSV( String fichierCible ) {
+
+	public void exportEstimationResultatsToCSV( String fichierCible ){
+		System.out.println( "Début export" );
+
+		try {
+			FileWriter writerRatio = new FileWriter( fichierCible );
+
+			//ajout des labels colonnes
+			writerRatio.append( "nuance politique" );
+			writerRatio.append(',');
+			writerRatio.append( "nombre de voix" );
+			writerRatio.append('\n');
+
+			this.estimations_candidats.forEach( ( id, candidat ) -> {
+				try {
+					writerRatio.append( candidat.getNuance() );
+					writerRatio.append(',');
+					writerRatio.append( Integer.toString( candidat.getScore() ));
+					writerRatio.append('\n');
+				} catch(IOException e) {
+					e.printStackTrace();
+				}
+			});
+			writerRatio.flush();
+			writerRatio.close();
+
+			System.out.println( "Fin export" );
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void exportRatioReportToCSV( String fichierCible, List< election > listeElection ) {
 		System.out.println( "Début export" );
 		
-//		String fileRatio = "/tempo/IC05-workSets/" + fichierCible + "/ratio_" + fichierCible + ".csv";
-//		String fileNbVoix = "/tempo/IC05-workSets/" + fichierCible + "/nbVoix_" + fichierCible + ".csv";
-		
 		try {
-			FileWriter writerRatio = new FileWriter( fichierCible, true );
+			FileWriter writerRatio = new FileWriter( fichierCible );
 //			FileWriter writerNbVoix = new FileWriter( fileNbVoix );
 			
 			//ajout des labels colonnes
@@ -186,41 +244,18 @@ public class election {
 			writerRatio.append( "Target" );
 			writerRatio.append(',');
 			writerRatio.append( "pourcentage report" );
-			writerRatio.append(',');
-			writerRatio.append( "date début" );
-			writerRatio.append(',');
-			writerRatio.append( "date fin" );
 			writerRatio.append('\n');
 			
-//			writerNbVoix.append( "Source" );
-//			writerNbVoix.append(',');
-//			writerNbVoix.append( "Target" );
-//			writerNbVoix.append(',');
-//			writerNbVoix.append( "nombre report" );
-//			writerNbVoix.append('\n');
-			
-			this.liste_bureau.forEach( ( id, bureau ) -> {
-				bureau.getListe_reports().forEach( ( report ) -> {
+			listeElection.forEach( (election) -> {
+			election.liste_reports.forEach( ( id, report ) -> {
 					try {
 						writerRatio.append( report.getNuance_origine() );
 						writerRatio.append(',');
 						writerRatio.append( report.getNuance_cible() );
 						writerRatio.append(',');
 						writerRatio.append( Double.toString( report.getRatio_report() ));
-						writerRatio.append(',');
-						writerRatio.append( this.getDateDebut() );
-						writerRatio.append(',');
-						writerRatio.append( this.getDateFin() );
 						writerRatio.append('\n');
 						
-//						writerNbVoix.append( report.getNuance_origine() );
-//						writerNbVoix.append(',');
-//						writerNbVoix.append( report.getNuance_cible() );
-//						writerNbVoix.append(',');
-//						writerNbVoix.append( Integer.toString( report.getNb_voix_reportées() ));
-//						writerNbVoix.append(',');
-//						writerNbVoix.append( this.getDate() );
-//						writerNbVoix.append('\n');
 					} catch(IOException e) {
 					     e.printStackTrace();
 					}
@@ -229,18 +264,13 @@ public class election {
 			writerRatio.flush();
 			writerRatio.close();
 			
-//			writerNbVoix.flush();
-//			writerNbVoix.close();
-			
 			System.out.println( "Fin export" );
 		} catch(IOException e) {
 		     e.printStackTrace();
 		}
 	}
 	
-	private static Element createNode( String id, String label, String r, String g, String b ){
-//		Namespace viz = Namespace.getNamespace("viz", "http://www.gexf.net/1.1draft/viz");
-		
+	private static Element createNode( String id, String label, String r, String g, String b ){		
 		Element myElement = new Element( "node" );
 		myElement.setAttribute( "id",  id );
 		myElement.setAttribute( "label",  label );
@@ -254,9 +284,16 @@ public class election {
 		return myElement;
 	}
 	
-	public static void createGEXF( List< election > listeElection , String fichierCible, String numDpt ){
+	public static void createGEXF( List< election > listeElection , String fichierCible, String sNumDpt ){
 			Map< String, Element > liensAjoutés = new HashMap< String, Element >();
 			Map< String, Element > spellsAjoutés = new HashMap< String, Element >();
+			List< String > iNumDpt = new ArrayList< String >();
+
+			String[] parts = sNumDpt.split( "\\s" );
+			for( String  toto : parts){
+//				System.out.println( toto );
+				iNumDpt.add( toto );
+			}
 			
 			Element racine = exportHeaderGEXF();
 			Element graph = racine.getChild( "graph" );
@@ -264,8 +301,9 @@ public class election {
 			graph.addContent( edges );
 			
 			listeElection.forEach( (election) -> {
-				if ( !numDpt.equals( "" )){
-					election.getBureauxDpt( numDpt );
+				election.creerElection();
+				if ( !iNumDpt.equals( "" )){
+					election.getBureauxDpt( iNumDpt );
 				}
 				election.sommeReports();
 				election.liste_reports.forEach( ( id, report ) -> {
