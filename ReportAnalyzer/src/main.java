@@ -28,14 +28,14 @@ public class main {
 //		election CN04 = new election( "CN04", "/tempo/IC05-workSets/CN04/CN04.txt", "2004-01-01", "2004-06-30" );
 //		election CN08 = new election( "CN08", "/tempo/IC05-workSets/CN08/CN08.txt", "2008-01-01", "2008-06-30" );
 //		election CN11 = new election( "CN11", "/tempo/IC05-workSets/CN11/CN11.txt", "2011-01-01", "2012-01-01" );
-//		election DP15 = new election( "DP15", "/tempo/IC05-workSets/DP15/DP15.txt", "2015-01-01", "2016-01-01" );
+//		election DP15 = new election( "DP15", "/tempo/workspace-IC05/IC05-workSets/DP15/DP15.txt", "2015-01-01", "2016-01-01" );
 //		election LG02 = new election( "LG02", "/tempo/IC05-workSets/LG02/LG02.txt", "2002-01-01", "2003-01-01" );
 //		election LG07 = new election( "LG07", "/tempo/IC05-workSets/LG07/LG07.txt", "2007-01-01", "2008-01-01" );
-//		election LG12 = new election( "LG12", "/tempo/IC05-workSets/LG12/LG12.txt", "2012-01-01", "2013-01-01" );
+		election LG12 = new election( "LG12", "/tempo/workspace-IC05/IC05-workSets/LG12/LG12.txt", "2012-01-01", "2013-01-01" );
 //		election MN08 = new election( "MN08", "/tempo/IC05-workSets/MN08/MN08.txt", "2008-07-01", "2009-01-01" );
 //		election MN14 = new election( "MN14", "/tempo/IC05-workSets/MN14/MN14.txt", "2014-01-01", "2015-01-01" );
-		election RG04 = new election( "RG04", "/tempo/workspace-IC05/IC05-workSets/RG04/RG04.txt", "2004-07-01", "2005-01-01" );
-		election RG042 = new election( "RG042", "/tempo/workspace-IC05/IC05-workSets/RG10/RG10.txt", "2010-01-01", "2011-01-01" );
+//		election RG04 = new election( "RG04", "/tempo/workspace-IC05/IC05-workSets/RG04/RG04.txt", "2004-07-01", "2005-01-01" );
+//		election RG042 = new election( "RG042", "/tempo/workspace-IC05/IC05-workSets/RG10/RG10.txt", "2010-01-01", "2011-01-01" );
 //		election RG10 = new election( "RG10", "/tempo/IC05-workSets/RG10/RG10.txt", "2010-01-01", "2011-01-01" );
 		
 
@@ -54,18 +54,23 @@ public class main {
 //		daList.add( DP15 );
 //		daList.add( LG02 );
 //		daList.add( LG07 );
-//		daList.add( LG12 );
+		daList.add( LG12 );
 //		daList.add( MN08 );
 //		daList.add( MN14 );
-		daList.add( RG04 );
+//		daList.add( RG04 );
 //		daList.add( RG10 );
 
 		//		List< bureau > daListeDpt = new ArrayList< bureau >();
 		
+		estimationT2( "RG15", "/tempo/workspace-IC05/IC05-workSets/Estimated/RG15_T1.txt", "2015-12-06", "2015-12-13" );
+//		daList.add( predictedElection );
+//
+//		
+//		predictedElection.createGEXF( daList, "/tempo/workspace-IC05/IC05-workSets/Estimated/test.gexf" );
 		
 		
-		election.createGEXF( daList, "/tempo/workspace-IC05/RegionalesNP.gexf", dptNPC );
-//		election.exportRatioReportToCSV( "/tempo/IC05-workSets/Estimated/listReports.csv", daList);
+//		election.createGEXF( daList, "/tempo/workspace-IC05/Estimated/LG12.gexf" );
+//		LG12.exportRatioReportToCSV( "/tempo/workspace-IC05/IC05-workSets/Estimated/reportsLG12.csv" );
 		
 //		RG042.sommeResultats( "/tempo/IC05-workSets/Estimated/listReports.csv" );
 //		RG042.exportEstimationResultatsToCSV( "/tempo/IC05-workSets/Estimated/estimations.csv" );
@@ -74,9 +79,13 @@ public class main {
 	public static void estimationT2( String nomElection, String nomFichier, String dateD, String dateF ){
 		predictedElection = new election( nomElection, nomFichier, dateD, dateF );
 		createListeT2();
+		predictedElection.creerElection();
 		predictedElection.addCandidatsSecondTour( candidatsT2 );
+		predictedElection.sommeReports();
 		
+		predictedElection.sommePredictedResultats( "/tempo/workspace-IC05/IC05-workSets/Estimated/reports.csv" );
 		
+		predictedElection.exportEstimationResultatsToCSV( "/tempo/workspace-IC05/IC05-workSets/Estimated/test.txt" );
 	}
 	
 	public static void addCandidatRegion( String idCandidat, String nuance, String departements ){
@@ -86,7 +95,6 @@ public class main {
 		for( String toto : parts ){
 			listeDpt.add( toto );
 		}
-		
 		candidat newCandidat = new candidat( idCandidat, nuance );
 		candidatsT2.put( newCandidat, listeDpt );
 	}

@@ -41,6 +41,10 @@ public class bureau {
 	private int nb_voix_reportées = 0;
 	private double somme_reports = 0;
 	private Map< candidat, Integer > liste_candidats_T1 = new HashMap< candidat, Integer >();
+	public Map<candidat, Integer> getListe_candidats_T1() {
+		return liste_candidats_T1;
+	}
+
 	private Map< candidat, Integer > liste_candidats_T2 = new HashMap< candidat, Integer >();
 	public Map<candidat, Integer> getListe_candidats_T2() {
 		return liste_candidats_T2;
@@ -81,6 +85,7 @@ public class bureau {
 		case "RPF" :
 		case "DVD" :
 		case "DL" :
+		case "LDLF" :
 		case "MPF" :
 		case "LDVD" :
 		case "PRV" :
@@ -99,6 +104,7 @@ public class bureau {
 		case "LUMP" :
 		case "BC-UMP" :
 		case "LUD" :
+		case "LLR" :
 			newCandidat.setNuance( "Union de la Droite" );
 			break;
 		case "UDF" :
@@ -120,7 +126,7 @@ public class bureau {
 		case "LUDI" :
 		case "BC-MDM" :
 		case "BC-UC" :
-		case "BC-UDI" :	
+		case "BC-UDI" :
 			newCandidat.setNuance( "Centre" );
 			break;
 		case "DIV" :
@@ -143,6 +149,7 @@ public class bureau {
 		case "LEC" :
 		case "LVE" :
 		case "LVEC" :
+		case "LECO" :
 		case "BC-VEC" :
 			newCandidat.setNuance( "Ecologistes" );
 			break;
@@ -159,6 +166,7 @@ public class bureau {
 		case "BC-UG" :
 		case "BC-RDG" :	
 		case "BC-DVG" :
+		case "LVEG" :
 			newCandidat.setNuance( "Divers Gauche" );
 			break;
 		case "COM" :	
@@ -171,6 +179,7 @@ public class bureau {
 		case "BC-FG" :	
 		case "BC-PG" :	
 		case "BC-COM" :	
+		case "LRDG" :
 			newCandidat.setNuance( "Front de Gauche" );
 			break;
 		case "EXG" :	
@@ -196,16 +205,24 @@ public class bureau {
 	}
 
 	public void calculReportV1() {
+//		System.out.println( "calculReportV1 : BEGIN" );
 		//System.out.println( "BEGIN" );
 		this.liste_candidats_T1.forEach(( candidat1 , nb_voix1 ) -> {
-			//System.out.println( " T1 " + candidat1.getNuance() + " voix : " + nb_voix1 );
+//			System.out.println( " T1 " + candidat1.getNuance() + " voix : " + nb_voix1 );
+			this.liste_candidats_T2.forEach(( candidat2, nb_voix2 ) -> {
+//				System.out.println( " T2 " + candidat2.getNuance() + " voix : " + nb_voix2 );
+			});
+			
 			if( false == liste_candidats_T2.containsKey( candidat1 )) {
 				this.liste_candidats_T2.forEach(( candidat2, nb_voix2 ) -> {
+//					System.out.println( "sommeReports : calcul report" );
 						//System.out.println( " T2 " + candidat2.getNuance() + " voix : " + nb_voix2 );
 					// on considère que les votants pour les candidats T2 ont aussi vot� pour eux au T1
 						//System.out.println( nb_exprim�s_T2 );
+//						System.out.println( "c1 " + candidat1.getNuance() + " c2 " + candidat2.getNuance() );
 						report newReport = new report( candidat1.getNuance(), candidat2.getNuance(), (double)nb_voix2*nb_voix1/nb_inscrits );
 						liste_reports.add( newReport );
+//						System.out.println( newReport.getId() );
 						nb_voix_reportées += nb_voix1;
 						//System.out.println( Integer.toString( nb_voix1 ));
 				});
@@ -219,10 +236,11 @@ public class bureau {
 			//System.out.println( Integer.toString( report.getNb_voix_reportées() ));
 		});
 		//System.out.println( somme_reports );
-		//System.out.println( "END" );
+//		System.out.println( "calculReportV1 : END" );
 	}
 	
 	public Map< String, report > lectureEstimationReports( String fichierRatiosReports ){
+//		System.out.println( "lectureEstimationReports : BEGIN" );
 		Map< String, report > modeleReport = new HashMap< String, report >();
 		try {
 			Scanner scanner = new Scanner( new File( fichierRatiosReports ));
@@ -230,9 +248,11 @@ public class bureau {
 				// Lecture du fichier ligne par ligne. Cette boucle se termine quand la méthode retourne la valeur null.
 				while( scanner.hasNextLine() ) {
 				    String line = scanner.nextLine();
-				    String[] parts = line.split( "," );
+//				    System.out.println( line );
+				    String[] parts = line.split( ";" );
 				    
-				    report newReport = new report( parts[0], parts[1], Double.parseDouble( parts[3] ));
+				    report newReport = new report( parts[0], parts[1], Double.parseDouble( parts[2] ));
+//				    System.out.println( newReport.getId() );
 				    modeleReport.put( newReport.getId(), newReport );
 				}
 			} finally {
@@ -243,21 +263,26 @@ public class bureau {
 		// erreur de fermeture des flux
 			System.out.println( "Erreur --" + ioe.toString() );
 		}
+		
+//		System.out.println( "lectureEstimationReports : END" );
 		return modeleReport;
 	}
 	
 	public void calculEstimationReports( Map< String, report > modeleReports ){
+//		System.out.println( "calculEstimationReports : BEGIN" );
 		this.liste_candidats_T1.forEach( ( candidat1, nb_voix1 ) -> {
-			if( false == liste_candidats_T2.containsKey( candidat1 )) {
+			if( !liste_candidats_T2.containsKey( candidat1 )) {
 				this.liste_candidats_T2.forEach(( candidat2, nb_voix2 ) -> {
-					nb_voix2 += (int)(this.getNb_inscrits()* modeleReports.get( candidat1.getNuance() + candidat2.getNuance()).getRatio_report() );
-					//System.out.println( Integer.toString( nb_voix1 ));
+//					System.out.println(candidat1.getNuance() + candidat2.getNuance());
+					nb_voix2 += (int)( nb_voix1 * modeleReports.get( candidat1.getNuance() + candidat2.getNuance()).getRatio_report());
+					System.out.println( Integer.toString( nb_voix2 ));
 				});
 			}
 			else { // résultat au 1er tour du candidat qualifié au tour 2
-				this.liste_candidats_T2.replace( candidat1, this.liste_candidats_T2.get( candidat1 ) + nb_voix1 );
+				this.liste_candidats_T2.put( candidat1, this.liste_candidats_T2.get( candidat1 ) + nb_voix1 );			
 			}
 		});
+//		System.out.println( "calculEstimationReports : END" );
 	}
 
 	public int getNb_votants_T1() {
