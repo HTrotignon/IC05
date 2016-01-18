@@ -137,13 +137,16 @@ public class bureau {
 		case "LAUT" :
 		case "LDIV" :
 		case "BC-DIV" :
-			newCandidat.setNuance( "Divers" );
-			break;
 		case "REG" :
 		case "LREG" :
 		case "LRG" :
-			newCandidat.setNuance( "Regionalistes" );
+			newCandidat.setNuance( "Divers" );
 			break;
+//		case "REG" :
+//		case "LREG" :
+//		case "LRG" :
+//			newCandidat.setNuance( "Regionalistes" );
+//			break;
 		case "ECO" :
 		case "VEC" :
 		case "LEC" :

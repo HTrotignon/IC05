@@ -161,7 +161,7 @@ public class election {
 	}
 	
 	public void sommePredictedResultats( String fichierReports ){
-		System.out.println( "sommePredictedResultats : BEGIN" );
+//		System.out.println( "sommePredictedResultats : BEGIN" );
 		this.liste_bureau.forEach( ( id, bureau ) -> {
 //			System.out.println( bureau.getCode_dpt() );
 			bureau.calculEstimationReports( bureau.lectureEstimationReports( fichierReports ));
@@ -176,11 +176,11 @@ public class election {
 				}
 			});
 		});
-		System.out.println( "sommePredictedResultats : END" );
+//		System.out.println( "sommePredictedResultats : END" );
 	}
 	
 	public void sommeReports() {
-		System.out.println( "sommeReports : BEGIN" );
+//		System.out.println( "sommeReports : BEGIN" );
 		this.liste_bureau.forEach( ( id, bureau ) -> {
 			bureau.calculReportV1();
 			bureau.getListe_reports().forEach( ( report ) -> {
@@ -197,18 +197,18 @@ public class election {
 		this.liste_reports.forEach( ( id, report ) -> {
 			nb_votants += this.liste_reports.get( report.getId() ).getNb_voix_reportées();
 		});
-		System.out.println( nb_votants );
+//		System.out.println( nb_votants );
 		this.liste_reports.forEach( ( id, report ) -> {
 			report.setRatio_report( report.getNb_voix_reportées()/(double)nb_votants );
-			System.out.println( Double.toString( report.getNb_voix_reportées() ));
+//			System.out.println( Double.toString( report.getNb_voix_reportées() ));
 		});
 		
 
-		System.out.println( "sommeReports : END" );
+//		System.out.println( "sommeReports : END" );
 	}	
 
 	public void getBureauxDpt( List< String > numDpt ) {
-		System.out.println( "getBureauDpt :: BEGIN" );
+//		System.out.println( "getBureauDpt :: BEGIN" );
 		Map< String, bureau > listeDpt = new HashMap< String, bureau >();
 
 		this.liste_bureau.forEach( ( id, bureau ) -> {
@@ -225,7 +225,7 @@ public class election {
 		//listeDpt.forEach( (bureau) -> bureau.calculReportV1());
 
 
-		System.out.println( "getBureauDpt :: END" );
+//		System.out.println( "getBureauDpt :: END" );
 	}
 
 	public void exportEstimationResultatsToCSV( String fichierCible ){
@@ -347,15 +347,24 @@ public class election {
 					election.getBureauxDpt( iNumDpt );
 				}
 				election.sommeReports();
+				election.erase();
 				election.liste_reports.forEach( ( id, report ) -> {
 					election.addEdge( edges, report, liensAjoutés, spellsAjoutés);
 				});
+				election.liste_reports.clear();
 			});
 			
 			saveGEXF( fichierCible, racine );
 			System.out.println("createGEXF : END");
 	}
 	
+	private void erase() {
+		this.liste_bureau.clear();
+		this.candidatsNational_T1.clear();
+		this.liste_nuances.clear();
+		this.estimations_candidats.clear();		
+	}
+
 	public static void createGEXF( List< election > listeElection , String fichierCible ){
 		createGEXF( listeElection , fichierCible, "-1" );
 	}
@@ -411,18 +420,18 @@ public class election {
 		graph.addContent( nodes );
 		
 		//modification avec positions
-		nodes.addContent( createNode( "Extreme Droite", "A", "0", "0", "179", "0", "0", "60" )); //MNR, EXD, LEXD, BC-EXD
-		nodes.addContent( createNode( "Front National", "B", "0", "0", "255", "500", "0", "60"  )); //FN, LFN, BC-FN
-		nodes.addContent( createNode( "Divers Droite", "C", "117", "119", "255", "1000", "0", "60"  )); //RPF, DVD, DL, MPF, LDVD, PRV, BC-UD, BC-DLF, BC-DVD
-		nodes.addContent( createNode( "Union de la Droite", "D", "102", "230", "255", "1500", "0", "60"  )); //RPR, UMP, MAJ, LDD, LMAJ, M-NC, M, LUMP, BC-UMP
-		nodes.addContent( createNode( "Centre", "E", "255", "179", "17", "2000", "0", "60"  )); //UDF, MDC, PRG, PREP, RDG, LDR, UDFD, LCMD, LMC, MGC, MODM, CEN, ALLI, NCE, LMDM, LUC, LUDI, BC-MDM, BC-UC, BC-UDI
-		nodes.addContent( createNode( "Divers", "F", "199", "195", "199", "2500", "0", "60"  )); //DIV, CPNT, LDV, LCP, AUT, LAUT, LDIV, BC-DIV
-		nodes.addContent( createNode( "Regionalistes", "G", "179", "107", "59", "3000", "0", "60"  )); //REG, LREG
-		nodes.addContent( createNode( "Ecologistes", "H", "68", "207", "39", "3500", "0", "60"  )); //ECO, VEC, LEC, LVE, LVEC, BC-VEC
-		nodes.addContent( createNode( "Parti Socialiste", "I", "255", "89", "158", "4000", "0", "60"  )); //SOC, LGA, LSOC, BC-SOC
-		nodes.addContent( createNode( "Divers Gauche", "J", "255", "155", "208", "4500", "0", "60"  )); //DVG, LDG, LUG, LDVG, BC-UG, BC-RDG, BC-DVG
-		nodes.addContent( createNode( "Front de Gauche", "K", "255", "128", "128", "5000", "0", "60"  )); //COM, LCOM, LCOP, PG, FG, LFG, LPG, BC-FG, BC-PG, BC-COM
-		nodes.addContent( createNode( "Extreme Gauche", "L", "255", "0", "0", "5500", "0", "60" )); //EXG, LEXG, LCR, LO, LXG, BC-EXG
+		nodes.addContent( createNode( "Extreme Droite", "A", "102", "230", "255", "5500", "0", "60" )); //MNR, EXD, LEXD, BC-EXD
+		nodes.addContent( createNode( "Front National", "B", "117", "119", "255", "5000", "0", "60"  )); //FN, LFN, BC-FN
+		nodes.addContent( createNode( "Divers Droite", "C", "102", "230", "255", "4500", "0", "60"  )); //RPF, DVD, DL, MPF, LDVD, PRV, BC-UD, BC-DLF, BC-DVD
+		nodes.addContent( createNode( "Union de la Droite", "D", "102", "230", "255", "4000", "0", "60"  )); //RPR, UMP, MAJ, LDD, LMAJ, M-NC, M, LUMP, BC-UMP
+		nodes.addContent( createNode( "Centre", "E", "102", "230", "255", "3500", "0", "60"  )); //UDF, MDC, PRG, PREP, RDG, LDR, UDFD, LCMD, LMC, MGC, MODM, CEN, ALLI, NCE, LMDM, LUC, LUDI, BC-MDM, BC-UC, BC-UDI
+		nodes.addContent( createNode( "Divers", "F", "199", "195", "199", "3000", "0", "60"  )); //DIV, CPNT, LDV, LCP, AUT, LAUT, LDIV, BC-DIV
+//		nodes.addContent( createNode( "Regionalistes", "G", "179", "107", "59", "2500", "0", "60"  )); //REG, LREG
+		nodes.addContent( createNode( "Ecologistes", "H", "255", "155", "208", "2000", "0", "60"  )); //ECO, VEC, LEC, LVE, LVEC, BC-VEC
+		nodes.addContent( createNode( "Parti Socialiste", "I", "255", "155", "208", "1500", "0", "60"  )); //SOC, LGA, LSOC, BC-SOC
+		nodes.addContent( createNode( "Divers Gauche", "J", "255", "155", "208", "1000", "0", "60"  )); //DVG, LDG, LUG, LDVG, BC-UG, BC-RDG, BC-DVG
+		nodes.addContent( createNode( "Front de Gauche", "K", "255", "155", "208", "500", "0", "60"  )); //COM, LCOM, LCOP, PG, FG, LFG, LPG, BC-FG, BC-PG, BC-COM
+		nodes.addContent( createNode( "Extreme Gauche", "L", "255", "155", "208", "0", "0", "60" )); //EXG, LEXG, LCR, LO, LXG, BC-EXG
 		nodes.addContent( createNode( "Blancs et Nuls", "M", "217", "217", "217", "2750", "1000", "60" )); //Blancs et Nuls
 		nodes.addContent( createNode( "Abstention", "N", "59", "59", "59", "2750", "-1000", "60" )); //Abstention
 		
